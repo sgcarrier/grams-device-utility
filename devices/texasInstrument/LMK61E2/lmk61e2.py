@@ -1,5 +1,6 @@
 import time
 import smbus
+from periphery import GPIO
 
 class LMK61E2:
 
@@ -136,7 +137,9 @@ class LMK61E2:
             val = self.read_param(i2c_ch, i2c_addr, key)
             print('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
-
+    def gpio_set(self, path, pin, val):
+        with GPIO(path, pin, "out") as gpio_out:
+            gpio_out.write(val)
 
 
 
