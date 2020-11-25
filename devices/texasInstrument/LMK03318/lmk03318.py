@@ -1,6 +1,9 @@
 import time
 import smbus
+import logging
 from periphery import GPIO
+
+_logger = logging.getLogger(__name__)
 
 class LMK03318:
 
@@ -193,16 +196,39 @@ class LMK03318:
                    "XO_CAP_CTRL": { "addr": 199, "loc": 0, "mask":    0x3FF, "regs": 1, "min": 0, "max":       0}   # XO_CAP_CTRL,
 }
 
+    def __init__(self, i2c_ch, i2c_addr, name="lmk03318"):
+        self._name = name
+        self.__dict__ = {}
+        self.i2c_ch = i2c_ch
+        self.i2c_addr = i2c_addr
+        self.from_dict_plat()
+
+    def from_dict_plat(self):
+        for key, value in self.REGISTERS_INFO.items():
+            print(key + " : " + str(value) )
+            value = Command(value, str(key), self)
+            self.__dict__[key] = value
+
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
     # Read temperature registers and calculate Celsius
-    def read_param(self, i2c_ch, i2c_addr, paramName):
+    def read_param(self, paramName):
         if not (paramName in self.REGISTERS_INFO):
             print("ERROR :: LMK03318 :: " + str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
 
-        with smbus.SMBus(i2c_ch) as bus:
-            retVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+        with smbus.SMBus(self.i2c_ch) as bus:
+            retVal = bus.read_i2c_block_data(self.i2c_addr, paramInfo["addr"], paramInfo["regs"])
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
@@ -215,7 +241,7 @@ class LMK03318:
 
         return val
 
-    def write_param(self, i2c_ch, i2c_addr, paramName, value):
+    def write_param(self, paramName, value):
         if not (paramName in self.REGISTERS_INFO):
             print("ERROR :: LMK03318 :: " + str(paramName) + " is an invalid parameter name")
             return -1
@@ -237,13 +263,13 @@ class LMK03318:
 
         value = self.register_exceptions(paramInfo, value)
 
-        with smbus.SMBus(i2c_ch) as bus:
-            currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+        with smbus.SMBus(self.i2c_ch) as bus:
+            currVal = bus.read_i2c_block_data(self.i2c_addr, paramInfo["addr"], paramInfo["regs"])
             writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
             for i in paramInfo["regs"]:
                 writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
-            bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
+            bus.write_i2c_block_data(self.i2c_addr, paramInfo["addr"], writeBuf)
 
         return 0
 
@@ -276,6 +302,39 @@ class LMK03318:
             gpio_out.write(val)
 
 
+
+class Command():
+    def __init__(self, d, name="", acc=None):
+        self.__dict__ = {}
+        self._name = name
+        self._acc = acc
+
+    def __call__(self, *args):
+        try:
+            if len(args) == 1:
+                self._acc.write_param(self._name, args[0])
+            elif len(args) == 0:
+                return self._acc.read_param(self._name)
+        except Exception as e:
+            _logger.error("Could not set message to platform. Check connection...")
+            raise e
+
+    def from_dict(self, d, name=""):
+        for key, value in d.items():
+            self.__dict__[key] = value
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+
+
+'''
 if __name__ == "__main__":
     import argparse
 
@@ -289,3 +348,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     print((args))
+'''
