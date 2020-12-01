@@ -1,0 +1,23 @@
+from setuptools import setup, find_packages
+
+setup(  name='Grams Device Utility',
+        version='0.1',
+        description='Toolkit for device comm',
+        long_description='',
+        classifiers=[
+        'Programming Language :: Python :: 3',
+        ],
+        author='Simon Carrier',
+        author_email='simon.g.carrier@usherbrooke.ca',
+        packages=find_packages(),
+        install_requires=[
+            'logging',
+            'pip',
+            'pkg-resources',
+            'python-periphery',
+            'setuptools',
+            'smbus',
+            'spidev'
+        ],
+        include_package_data=True,
+        zip_safe=False)

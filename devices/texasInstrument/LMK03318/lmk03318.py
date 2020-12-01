@@ -196,19 +196,22 @@ class LMK03318:
                    "XO_CAP_CTRL": { "addr": 199, "loc": 0, "mask":    0x3FF, "regs": 1, "min": 0, "max":       0}   # XO_CAP_CTRL,
 }
 
-    def __init__(self, i2c_ch, i2c_addr, name="lmk03318"):
+    ADDRESS_INFO = []
+
+    def __init__(self, i2c_ch=None, i2c_addr=None, name="lmk03318"):
         self._name = name
         self.__dict__ = {}
-        self.i2c_ch = i2c_ch
-        self.i2c_addr = i2c_addr
+        if i2c_ch and i2c_addr:
+            self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
         self.from_dict_plat()
 
     def from_dict_plat(self):
         for key, value in self.REGISTERS_INFO.items():
-            print(key + " : " + str(value) )
             value = Command(value, str(key), self)
             self.__dict__[key] = value
 
+    def register_device(self, channel, address):
+        self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
 
     def __repr__(self):
         return self._name
@@ -220,15 +223,21 @@ class LMK03318:
         return self.__dict__[key]
 
     # Read temperature registers and calculate Celsius
-    def read_param(self, paramName):
+    def read_param(self, devNum, paramName):
         if not (paramName in self.REGISTERS_INFO):
             print("ERROR :: LMK03318 :: " + str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
+        if not self.ADDRESS_INFO:
+            _logger.error("No Devices registered. Aborting...")
+            return
 
-        with smbus.SMBus(self.i2c_ch) as bus:
-            retVal = bus.read_i2c_block_data(self.i2c_addr, paramInfo["addr"], paramInfo["regs"])
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
+
+        with smbus.SMBus(i2c_ch) as bus:
+            retVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
@@ -241,12 +250,18 @@ class LMK03318:
 
         return val
 
-    def write_param(self, paramName, value):
+    def write_param(self, devNum, paramName, value):
         if not (paramName in self.REGISTERS_INFO):
             print("ERROR :: LMK03318 :: " + str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
+        if not self.ADDRESS_INFO:
+            _logger.error("No Devices registered. Aborting...")
+            return
+
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
         if (1 == paramInfo["min"]) and (1 == paramInfo["max"]):
             print("ERROR :: LMK03318 :: " + str(paramName) + " is a read-only parameter")
@@ -263,13 +278,13 @@ class LMK03318:
 
         value = self.register_exceptions(paramInfo, value)
 
-        with smbus.SMBus(self.i2c_ch) as bus:
-            currVal = bus.read_i2c_block_data(self.i2c_addr, paramInfo["addr"], paramInfo["regs"])
+        with smbus.SMBus(i2c_ch) as bus:
+            currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
             writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
             for i in paramInfo["regs"]:
                 writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
-            bus.write_i2c_block_data(self.i2c_addr, paramInfo["addr"], writeBuf)
+            bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
 
         return 0
 
@@ -312,11 +327,11 @@ class Command():
     def __call__(self, *args):
         try:
             if len(args) == 1:
-                self._acc.write_param(self._name, args[0])
+                self._acc.write_param(args[0], self._name, args[1])
             elif len(args) == 0:
-                return self._acc.read_param(self._name)
+                return self._acc.read_param(args[0], self._name)
         except Exception as e:
-            _logger.error("Could not set message to platform. Check connection...")
+            _logger.error("Could not set message to device. Check connection...")
             raise e
 
     def from_dict(self, d, name=""):
