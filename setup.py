@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-setup(  name='Grams Device Utility',
+setup(  name='grams-device-utility',
         version='0.1',
         description='Toolkit for device comm',
         long_description='',
