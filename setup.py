@@ -19,4 +19,4 @@ setup(  name='grams-device-utility',
         ],
         include_package_data=True,
         zip_safe=False,
-        data_files=[('')])
+        package_data={'': ['*.json']})
