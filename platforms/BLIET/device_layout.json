@@ -1,0 +1,47 @@
+{
+  "texasInstruments": {
+    "LMK03318": {
+      "addr": [
+        {
+          "ch": 1,
+          "addr": 80
+        }
+      ],
+      "independent": false
+    },
+    "LMK61E2": {
+      "addr": [
+        {
+          "ch": 1,
+          "addr": 90
+        },
+        {
+          "ch": 0,
+          "addr": 88
+        },
+        {
+          "ch": 0,
+          "addr": 89
+        },
+        {
+          "ch": 1,
+          "addr": 88
+        },
+        {
+          "ch": 1,
+          "addr": 89
+        }
+      ],
+      "independent": false
+    },
+    "TCA9539": {
+      "addr": [
+        {
+          "ch": 0,
+          "addr": 116
+        }
+      ],
+      "independent": false
+    }
+  }
+}

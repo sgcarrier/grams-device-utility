@@ -198,7 +198,7 @@ class LMK03318:
 
     ADDRESS_INFO = []
 
-    def __init__(self, i2c_ch=None, i2c_addr=None, name="lmk03318"):
+    def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK03318"):
         self._name = name
         self.__dict__ = {}
         if i2c_ch and i2c_addr:
@@ -236,8 +236,13 @@ class LMK03318:
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
-        with smbus.SMBus(i2c_ch) as bus:
-            retVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+        try:
+            with smbus.SMBus(i2c_ch) as bus:
+                retVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+        except FileNotFoundError as e:
+            _logger.error(e)
+            _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ". Check your connection....")
+            return -1
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
@@ -263,12 +268,12 @@ class LMK03318:
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
-        if (1 == paramInfo["min"]) and (1 == paramInfo["max"]):
-            print("ERROR :: LMK03318 :: " + str(paramName) + " is a read-only parameter")
+        if (0 == paramInfo["min"]) and (0 == paramInfo["max"]):
+            _logger.error(str(paramName) + " is a read-only parameter")
             return -1
 
         if (value < paramInfo["min"]) or (value > paramInfo["max"]):
-            print("ERROR :: LMK03318 :: " + str(value) + " is an invalid value")
+            _logger.error(str(paramName) + " :: " + str(value) + " is an invalid value")
             return -1
 
         # Positions to appropriate bits
@@ -277,14 +282,18 @@ class LMK03318:
         value &= paramInfo["mask"]
 
         value = self.register_exceptions(paramInfo, value)
+        try:
+            with smbus.SMBus(i2c_ch) as bus:
+                currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+                writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
+                for i in paramInfo["regs"]:
+                    writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
-        with smbus.SMBus(i2c_ch) as bus:
-            currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
-            writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
-            for i in paramInfo["regs"]:
-                writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
-
-            bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
+                bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
+        except FileNotFoundError as e:
+            _logger.error(e)
+            _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ". Check your connection....")
+            return -1
 
         return 0
 
@@ -326,13 +335,16 @@ class Command():
 
     def __call__(self, *args):
         try:
-            if len(args) == 1:
+            if len(args) == 2:
                 self._acc.write_param(args[0], self._name, args[1])
-            elif len(args) == 0:
+            elif len(args) == 1:
                 return self._acc.read_param(args[0], self._name)
+            else:
+                _logger.warn("Incorrect number of arguments. Ignoring")
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             raise e
+
 
     def from_dict(self, d, name=""):
         for key, value in d.items():
