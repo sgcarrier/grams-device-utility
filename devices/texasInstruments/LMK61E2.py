@@ -1,6 +1,9 @@
 import time
 import smbus
+import logging
 from periphery import GPIO
+
+_logger = logging.getLogger(__name__)
 
 class LMK61E2:
 

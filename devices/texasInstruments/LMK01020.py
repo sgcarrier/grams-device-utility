@@ -1,5 +1,8 @@
 import time
+import logging
 from periphery import SPI, GPIO
+
+_logger = logging.getLogger(__name__)
 
 class LMK01020:
 
