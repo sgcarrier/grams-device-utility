@@ -45,6 +45,7 @@ class BLIET():
             c = getattr(m, class_name)
             return c
         except ImportError:
+            print(module_name)
             print("Error, could not import module from string")
             return None
         except AttributeError:
