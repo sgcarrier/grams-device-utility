@@ -65,8 +65,14 @@ class LMK61E2:
 
         paramInfo = self.REGISTERS_INFO[paramName]
 
-        with smbus.SMBus(i2c_ch) as bus:
+        try:
+            bus = smbus.SMBus(i2c_ch)
             retVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+            bus.close()
+        except FileNotFoundError as e:
+            _logger.error(e)
+            _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ".Check your connection....")
+            return -1
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
@@ -101,13 +107,19 @@ class LMK61E2:
 
         value = self.register_exceptions(paramInfo, value)
 
-        with smbus.SMBus(i2c_ch) as bus:
+        try:
+            bus = smbus.SMBus(i2c_ch)
             currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
             writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
             for i in paramInfo["regs"]:
                 writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
+            bus.close()
+        except FileNotFoundError as e:
+            _logger.error(e)
+            _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ".Check your connection....")
+            return -1
 
         return 0
 
