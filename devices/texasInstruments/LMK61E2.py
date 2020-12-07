@@ -57,6 +57,34 @@ class LMK61E2:
                "SWR2PLL":  { "addr":  72, "loc":   1, "mask":      0x2, "regs":   1, "min":   1, "max":       1}  # LMK61E2_SWR2PLL
 }
 
+    ADDRESS_INFO = []
+    GPIO_PINS = {}
+
+    def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK61E2"):
+        self._name = name
+        self.__dict__ = {}
+        if i2c_ch and i2c_addr:
+            self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
+        self.from_dict_plat()
+
+    def from_dict_plat(self):
+        for key, value in self.REGISTERS_INFO.items():
+            value = Command(value, str(key), self)
+            self.__dict__[key] = value
+
+    def register_device(self, channel, address):
+        self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+
     # Read temperature registers and calculate Celsius
     def read_param(self, i2c_ch, i2c_addr, paramName):
         if not (paramName in self.REGISTERS_INFO):
@@ -152,9 +180,48 @@ class LMK61E2:
             val = self.read_param(i2c_ch, i2c_addr, key)
             print('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
-    def gpio_set(self, path, pin, val):
-        with GPIO(path, pin, "out") as gpio_out:
-            gpio_out.write(val)
+    def gpio_set(self, name, value):
+        if not self.GPIO_PINS:
+            _logger.warn("No gpio pins defined. Aborting...")
+            return -1
+
+        pin = self.GPIO_PINS[name]
+        g = GPIO(pin, "out")
+        g.write(value)
+        g.close()
+
+
+class Command():
+    def __init__(self, d, name="", acc=None):
+        self.__dict__ = {}
+        self._name = name
+        self._acc = acc
+
+    def __call__(self, *args):
+        try:
+            if len(args) == 2:
+                self._acc.write_param(args[0], self._name, args[1])
+            elif len(args) == 1:
+                return self._acc.read_param(args[0], self._name)
+            else:
+                _logger.warn("Incorrect number of arguments. Ignoring")
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            raise e
+
+
+    def from_dict(self, d, name=""):
+        for key, value in d.items():
+            self.__dict__[key] = value
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
 
 
 

@@ -327,7 +327,7 @@ class LMK03318:
         if not self.GPIO_PINS:
             _logger.warn("No gpio pins defined. Aborting...")
             return -1
-        
+
         pin = self.GPIO_PINS[name]
         g = GPIO(pin, "out")
         g.write(value)
