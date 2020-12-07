@@ -26,6 +26,8 @@ class BLIET():
                 devClass = self.class_for_name(moduleName, devName)
                 self.__dict__[devName] = devClass()
                 self.__dict__[devName].ADDRESS_INFO = attr["addr"]
+                if "GPIO_PINS" in attr:
+                    self.__dict__[devName].GPIO_PINS = attr["GPIO_PINS"]
 
     def __repr__(self):
         return self._name

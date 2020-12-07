@@ -111,7 +111,7 @@ class LMK61E2:
             bus = smbus.SMBus(i2c_ch)
             currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
             writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
-            for i in paramInfo["regs"]:
+            for i in range(paramInfo["regs"]-1):
                 writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
