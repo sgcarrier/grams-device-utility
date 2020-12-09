@@ -58,12 +58,15 @@ class LMK61E2:
 }
 
     # Read temperature registers and calculate Celsius
-    def read_param(self, i2c_ch, i2c_addr, paramName):
+    def read_param(self, devNum, paramName):
         if not (paramName in self.REGISTERS_INFO):
             print("ERROR :: LMK61E2 :: " + str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
+
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
         try:
             bus = smbus.SMBus(i2c_ch)
@@ -85,12 +88,15 @@ class LMK61E2:
 
         return val
 
-    def write_param(self, i2c_ch, i2c_addr, paramName, value):
+    def write_param(self, devNum, paramName, value):
         if not (paramName in self.REGISTERS_INFO):
             print("ERROR :: LMK61E2 :: " + str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
+
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
         if (1 == paramInfo["min"]) and (1 == paramInfo["max"]):
             print("ERROR :: LMK61E2 :: " + str(paramName) + " is a read-only parameter")
@@ -135,7 +141,10 @@ class LMK61E2:
         return value
 
 
-    def selftest(self, i2c_ch, i2c_addr):
+    def selftest(self, devNum):
+
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
         val = self.read_param(i2c_ch, i2c_addr, "VNDRID")
 
         if (val != 0x100B):
@@ -144,7 +153,10 @@ class LMK61E2:
 
         return 0
 
-    def readout_all_registers(self, i2c_ch, i2c_addr,):
+    def readout_all_registers(self, devNum):
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
+
         print("==== Device report ====")
         print("Device Name: " + str(self.DEVICE_NAME))
         print("I2C channel: " + str(i2c_ch) + " I2C address: " + str(i2c_addr))
