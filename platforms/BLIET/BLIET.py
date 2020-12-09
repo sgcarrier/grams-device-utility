@@ -34,6 +34,7 @@ class BLIET():
                     for addr_info in attr["addr"]:
                         self.__dict__[devName+"_"+str(num)] = devClass()
                         self.__dict__[devName+"_"+str(num)].ADDRESS_INFO = addr_info
+                        self.__dict__[devName + "_" + str(num)].DEVICE_NAME = devName+"_"+str(num)
                         if "GPIO_PINS" in attr:
                             self.__dict__[devName+"_"+str(num)].GPIO_PINS = attr["GPIO_PINS"][num]
                         num += 1
@@ -47,6 +48,30 @@ class BLIET():
     def __getitem__(self, key):
         return self.__dict__[key]
 
+    def runSelftests(self):
+        report = "\n========== DEVICE SELFTEST REPORT ==========\n"
+        report += "Board Name : {BoardName: <20} \n".format(BoardName=self._name)
+        report += '-' * 30 + "\n"
+        failed = 0
+        passed = 0
+        for key, item in self.__dict__.items():
+            if item.DEVICE_NAME:
+                devNum = 0
+                for addr in item.ADDRESS_INFO:
+                    ret = item.selftest(devNum)
+                    report += '{DeviceName: <10} ::'.format(DeviceName=item.DEVICE_NAME)
+                    report += self.dict2str(addr)
+                    if ret == 0:
+                        report += " ... PASSED \n"
+                        passed += 1
+                    else:
+                        report += " ... FAILED \n"
+                        failed += 1
+                    devNum += 1
+        report += "\n============ SELFTEST SUMMARY ============\n"
+        report += 'PASSED: {Passed: <10}'.format(Passed=passed)
+        report += 'FAILED: {Failed: <10}'.format(Failed=failed)
+        report += "\n========== DEVICE SELFTEST DONE ==========\n"
 
     def class_for_name(self, module_name, class_name):
         try:
@@ -63,7 +88,11 @@ class BLIET():
             print("Error, could not import class from string")
             return None
 
-
+    def dict2str(self, d):
+        s = ""
+        for key, item in d.items:
+            s += '{keyName: <10}: {value: <10},'.format(keyName=key, value=item)
+        return s[0:-2]
 
     def layout2Report(self, layout, boardName):
         report = "\n========== DEVICE LAYOUT REPORT ==========\n"

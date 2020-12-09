@@ -312,9 +312,8 @@ class LMK03318:
         val = self.read_param(i2c_ch, i2c_addr, "VNDRID")
 
         if (val != 0x100B):
-            _logger.error("Self-test for device on channel: " + str(i2c_ch) + " at address: " + str(i2c_addr) + " failed")
+            _logger.error("Self-test for device " + str(self.DEVICE_NAME) + " on channel: " + str(i2c_ch) + " at address: " + str(i2c_addr) + " failed")
             return -1
-
         return 0
 
     def readout_all_registers(self, devNum):
