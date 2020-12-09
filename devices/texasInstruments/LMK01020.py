@@ -58,11 +58,14 @@ class LMK01020:
                "POWERDOWN": { "addr": 14, "loc": 26, "mask":  0x4000000, "min": 0, "max":   1}  #POWERDOWN,
 }
 
-    def __init__(self):
-        LMK01020CurParams = [0] * 14
+    ADDRESS_INFO = []
+    GPIO_PINS = {}
 
-        LMK01020CurParams[9] = 0x22A00;
-        LMK01020CurParams[14] = 0x40000000;
+    def __init__(self):
+        self.LMK01020CurParams = [0] * 14
+
+        self.LMK01020CurParams[9] = 0x22A00;
+        self.LMK01020CurParams[14] = 0x40000000;
 
 
     def write_param(self, spi_path, spi_mode, paramName, value):

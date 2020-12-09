@@ -197,6 +197,7 @@ class LMK03318:
 }
 
     ADDRESS_INFO = []
+    GPIO_PINS = {}
 
     def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK03318"):
         self._name = name
@@ -287,7 +288,7 @@ class LMK03318:
             bus = smbus.SMBus(i2c_ch)
             currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
             writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
-            for i in paramInfo["regs"]:
+            for i in range(paramInfo["regs"]-1):
                 writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
@@ -324,10 +325,15 @@ class LMK03318:
             val = self.read_param(i2c_ch, i2c_addr, key)
             _logger.info('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
+    def gpio_set(self, name, value):
+        if not self.GPIO_PINS:
+            _logger.warn("No gpio pins defined. Aborting...")
+            return -1
 
-    def gpio_set(self, path, pin, val, dir="out"):
-        with GPIO(path, pin, dir) as gpio_out:
-            gpio_out.write(val)
+        pin = self.GPIO_PINS[name]
+        g = GPIO(pin, "out")
+        g.write(value)
+        g.close()
 
 
 
