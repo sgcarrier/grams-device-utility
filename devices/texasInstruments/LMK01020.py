@@ -68,19 +68,21 @@ class LMK01020:
         self.LMK01020CurParams[14] = 0x40000000;
 
 
-    def write_param(self, spi_path, spi_mode, paramName, value):
+    def write_param(self, devNum, paramName, value):
         if not (paramName in self.REGISTERS_INFO):
-            print("ERROR :: LMK01020 :: " + str(paramName) + " is an invalid parameter name")
+            _logger.error(str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
+        spi_path = self.ADDRESS_INFO[devNum]["path"]
+        spi_mode = self.ADDRESS_INFO[devNum]["mode"]
 
         if (1 == paramInfo["min"]) and (1 == paramInfo["max"]):
-            print("ERROR :: LMK01020 :: " + str(paramName) + " is a read-only parameter")
+            _logger.error(str(paramName) + " is a read-only parameter")
             return -1
 
         if (value < paramInfo["min"]) or (value > paramInfo["max"]):
-            print("ERROR :: LMK01020 :: " + str(value) + " is an invalid value")
+            _logger.error(str(value) + " is an invalid value")
             return -1
 
         # Positions to appropriate bits
@@ -104,14 +106,14 @@ class LMK01020:
         return value
 
 
-    def selftest(self, i2c_ch, i2c_addr):
+    def selftest(self, devNum):
         # lmk01020 is write-only, skip self-test
         return 0
 
 
-    def readout_all_registers(self, i2c_ch, i2c_addr):
-        print("==== Device report ====")
-        print("WARNING :: lmk01020 is write-only, skipping...")
+    def readout_all_registers(self, devNum):
+        _logger.info("==== Device report ====")
+        _logger.warning("lmk01020 is write-only, skipping...")
         return 0
 
 if __name__ == "__main__":

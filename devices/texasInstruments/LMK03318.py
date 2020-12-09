@@ -197,7 +197,7 @@ class LMK03318:
 }
 
     ADDRESS_INFO = []
-    GPIO_PINS = {}
+    GPIO_PINS = []
 
     def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK03318"):
         self._name = name
@@ -317,7 +317,9 @@ class LMK03318:
 
         return 0
 
-    def readout_all_registers(self, i2c_ch, i2c_addr,):
+    def readout_all_registers(self, devNum):
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
         _logger.info("==== Device report ====")
         _logger.info("Device Name: " + str(self.DEVICE_NAME))
         _logger.info("I2C channel: " + str(i2c_ch) + " I2C address: " + str(i2c_addr))
@@ -325,12 +327,13 @@ class LMK03318:
             val = self.read_param(i2c_ch, i2c_addr, key)
             _logger.info('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
-    def gpio_set(self, name, value):
-        if not self.GPIO_PINS:
-            _logger.warn("No gpio pins defined. Aborting...")
+    def gpio_set(self, devNum, name, value):
+        pins = self.GPIO_PINS[devNum]
+        if not pins:
+            _logger.warning("No gpio pins defined. Aborting...")
             return -1
 
-        pin = self.GPIO_PINS[name]
+        pin = pins[name]
         g = GPIO(pin, "out")
         g.write(value)
         g.close()

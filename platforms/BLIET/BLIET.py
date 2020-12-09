@@ -24,10 +24,19 @@ class BLIET():
             for devName, attr in dev.items():
                 moduleName = "devices." + manu + "." + devName
                 devClass = self.class_for_name(moduleName, devName)
-                self.__dict__[devName] = devClass()
-                self.__dict__[devName].ADDRESS_INFO = attr["addr"]
-                if "GPIO_PINS" in attr:
-                    self.__dict__[devName].GPIO_PINS = attr["GPIO_PINS"]
+                if attr['independent'] == False:
+                    self.__dict__[devName] = devClass()
+                    self.__dict__[devName].ADDRESS_INFO = attr["addr"]
+                    if "GPIO_PINS" in attr:
+                        self.__dict__[devName].GPIO_PINS = attr["GPIO_PINS"]
+                else:
+                    num = 0
+                    for addr_info in attr["addr"]:
+                        self.__dict__[devName+"_"+str(num)] = devClass()
+                        self.__dict__[devName+"_"+str(num)].ADDRESS_INFO = addr_info
+                        if "GPIO_PINS" in attr:
+                            self.__dict__[devName+"_"+str(num)].GPIO_PINS = attr["GPIO_PINS"][num]
+                        num += 1
 
     def __repr__(self):
         return self._name

@@ -8,12 +8,12 @@
         }
       ],
       "independent": false,
-      "GPIO_PINS": {
+      "GPIO_PINS": [{
         "PDN"    : 419,
         "CFGSEL0": 420,
         "CFGSEL1": 421,
         "SYNC"   : 422
-      }
+      }]
     },
     "LMK61E2": {
       "addr": [
@@ -45,6 +45,15 @@
         {
           "ch": 0,
           "addr": 116
+        }
+      ],
+      "independent": false
+    },
+    "LMK01020": {
+      "addr": [
+        {
+          "path": "",
+          "mode": 0
         }
       ],
       "independent": false

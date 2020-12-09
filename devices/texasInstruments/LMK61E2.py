@@ -88,7 +88,7 @@ class LMK61E2:
     # Read temperature registers and calculate Celsius
     def read_param(self, devNum, paramName):
         if not (paramName in self.REGISTERS_INFO):
-            print("ERROR :: LMK61E2 :: " + str(paramName) + " is an invalid parameter name")
+            _logger.error(str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
@@ -118,7 +118,7 @@ class LMK61E2:
 
     def write_param(self, devNum, paramName, value):
         if not (paramName in self.REGISTERS_INFO):
-            print("ERROR :: LMK61E2 :: " + str(paramName) + " is an invalid parameter name")
+            _logger.error(str(paramName) + " is an invalid parameter name")
             return -1
 
         paramInfo = self.REGISTERS_INFO[paramName]
@@ -127,11 +127,11 @@ class LMK61E2:
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
         if (1 == paramInfo["min"]) and (1 == paramInfo["max"]):
-            print("ERROR :: LMK61E2 :: " + str(paramName) + " is a read-only parameter")
+            _logger.error(str(paramName) + " is a read-only parameter")
             return -1
 
         if (value < paramInfo["min"]) or (value > paramInfo["max"]):
-            print("ERROR :: LMK61E2 :: " + str(value) + " is an invalid value")
+            _logger.error(str(value) + " is an invalid value")
             return -1
 
         # Positions to appropriate bits
@@ -176,7 +176,7 @@ class LMK61E2:
         val = self.read_param(i2c_ch, i2c_addr, "VNDRID")
 
         if (val != 0x100B):
-            print("ERROR :: LMK61E2 :: Self-test for device on channel: " + str(i2c_ch) + " at address: " + str(i2c_addr) + " failed")
+            _logger.error("Self-test for device on channel: " + str(i2c_ch) + " at address: " + str(i2c_addr) + " failed")
             return -1
 
         return 0
@@ -185,16 +185,16 @@ class LMK61E2:
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
-        print("==== Device report ====")
-        print("Device Name: " + str(self.DEVICE_NAME))
-        print("I2C channel: " + str(i2c_ch) + " I2C address: " + str(i2c_addr))
+        _logger.info("==== Device report ====")
+        _logger.info("Device Name: " + str(self.DEVICE_NAME))
+        _logger.info("I2C channel: " + str(i2c_ch) + " I2C address: " + str(i2c_addr))
         for key in self.REGISTERS_INFO:
             val = self.read_param(i2c_ch, i2c_addr, key)
-            print('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
+            _logger.info('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
     def gpio_set(self, name, value):
         if not self.GPIO_PINS:
-            _logger.warn("No gpio pins defined. Aborting...")
+            _logger.warning("No gpio pins defined. Aborting...")
             return -1
 
         pin = self.GPIO_PINS[name]
@@ -216,7 +216,7 @@ class Command():
             elif len(args) == 1:
                 return self._acc.read_param(args[0], self._name)
             else:
-                _logger.warn("Incorrect number of arguments. Ignoring")
+                _logger.warning("Incorrect number of arguments. Ignoring")
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             raise e
