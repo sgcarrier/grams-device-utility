@@ -121,8 +121,19 @@ class LMK61E2:
             _logger.error(str(paramName) + " is an invalid parameter name")
             return -1
 
-        paramInfo = self.REGISTERS_INFO[paramName]
+        if paramName in self.REGISTERS_INFO:
+            paramInfo = self.REGISTERS_INFO[paramName]
+        elif paramName in self.GPIO_PINS[devNum]:
+            self.gpio_set(devNum=devNum, name=paramName, value=value)
+            return 0
+        else:
+            _logger.error("{paramName} is an unknown parameter or pin name.".format(paramName=paramName))
+            return -1
 
+
+        if not self.ADDRESS_INFO:
+            _logger.error("No Devices registered. Aborting...")
+            return -1
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
@@ -131,7 +142,11 @@ class LMK61E2:
             return -1
 
         if (value < paramInfo["min"]) or (value > paramInfo["max"]):
-            _logger.error(str(value) + " is an invalid value")
+            _logger.error("{value} is an invalid value for {paramName}. " +
+                          "Must be between {min} and {max}".format(value=value,
+                                                                   paramName=paramName,
+                                                                   min=paramInfo["min"],
+                                                                   max=paramInfo["max"]))
             return -1
 
         # Positions to appropriate bits
@@ -192,15 +207,21 @@ class LMK61E2:
             val = self.read_param(i2c_ch, i2c_addr, key)
             _logger.info('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
-    def gpio_set(self, name, value):
+    def gpio_set(self, devNum, name, value):
         if not self.GPIO_PINS:
             _logger.warning("No gpio pins defined. Aborting...")
             return -1
 
-        pin = self.GPIO_PINS[name]
-        g = GPIO(pin, "out")
-        g.write(value)
-        g.close()
+        if name in self.GPIO_PINS[devNum]:
+            pin = self.GPIO_PINS[devNum][name]
+            g = GPIO(pin, "out")
+            g.write(value)
+            g.close()
+        else:
+            _logger.error("Could not find pin named " + str(name) + ". Aborting...")
+            return -1
+
+        return 0
 
 
 class Command():

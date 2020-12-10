@@ -1,7 +1,7 @@
 {
   "texasInstruments": {
     "LMK03318": {
-      "addr": [
+      "ADDRESS_INFO": [
         {
           "ch": 1,
           "addr": 80
@@ -16,7 +16,7 @@
       }]
     },
     "LMK61E2": {
-      "addr": [
+      "ADDRESS_INFO": [
         {
           "ch": 1,
           "addr": 90
@@ -41,7 +41,7 @@
       "independent": false
     },
     "TCA9539": {
-      "addr": [
+      "ADDRESS_INFO": [
         {
           "ch": 0,
           "addr": 116
@@ -50,7 +50,7 @@
       "independent": false
     },
     "LMK01020": {
-      "addr": [
+      "ADDRESS_INFO": [
         {
           "path": "",
           "mode": 0

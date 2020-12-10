@@ -59,13 +59,37 @@ class LMK01020:
 }
 
     ADDRESS_INFO = []
-    GPIO_PINS = {}
+    GPIO_PINS = []
 
-    def __init__(self):
+    def __init__(self, path=None, mode=None, name="LMK01020"):
+        self._name = name
+        self.__dict__ = {}
+
+        if path and mode:
+            self.ADDRESS_INFO.append({'path': path, 'mode': mode})
+        self.from_dict_plat()
+
         self.LMK01020CurParams = [0] * 14
 
         self.LMK01020CurParams[9] = 0x22A00;
         self.LMK01020CurParams[14] = 0x40000000;
+
+    def from_dict_plat(self):
+        for key, value in self.REGISTERS_INFO.items():
+            value = Command(value, str(key), self)
+            self.__dict__[key] = value
+
+    def register_device(self, channel, address):
+        self.ADDRESS_INFO.append({'path': channel, 'mode': address})
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
 
 
     def write_param(self, devNum, paramName, value):
@@ -73,7 +97,19 @@ class LMK01020:
             _logger.error(str(paramName) + " is an invalid parameter name")
             return -1
 
-        paramInfo = self.REGISTERS_INFO[paramName]
+        if paramName in self.REGISTERS_INFO:
+            paramInfo = self.REGISTERS_INFO[paramName]
+        elif paramName in self.GPIO_PINS[devNum]:
+            self.gpio_set(devNum=devNum, name=paramName, value=value)
+            return 0
+        else:
+            _logger.error("{paramName} is an unknown parameter or pin name.".format(paramName=paramName))
+            return -1
+
+        if not self.ADDRESS_INFO:
+            _logger.error("No Devices registered. Aborting...")
+            return -1
+
         spi_path = self.ADDRESS_INFO[devNum]["path"]
         spi_mode = self.ADDRESS_INFO[devNum]["mode"]
 
@@ -82,7 +118,11 @@ class LMK01020:
             return -1
 
         if (value < paramInfo["min"]) or (value > paramInfo["max"]):
-            _logger.error(str(value) + " is an invalid value")
+            _logger.error("{value} is an invalid value for {paramName}. " +
+                          "Must be between {min} and {max}".format(value=value,
+                                                                   paramName=paramName,
+                                                                   min=paramInfo["min"],
+                                                                   max=paramInfo["max"]))
             return -1
 
         # Positions to appropriate bits
@@ -115,6 +155,53 @@ class LMK01020:
         _logger.info("==== Device report ====")
         _logger.warning("lmk01020 is write-only, skipping...")
         return 0
+
+    def gpio_set(self, devNum, name, value):
+        if not self.GPIO_PINS:
+            _logger.warning("No gpio pins defined. Aborting...")
+            return -1
+
+        if name in self.GPIO_PINS[devNum]:
+            pin = self.GPIO_PINS[devNum][name]
+            g = GPIO(pin, "out")
+            g.write(value)
+            g.close()
+        else:
+            _logger.error("Could not find pin named " + str(name) + ". Aborting...")
+            return -1
+
+        return 0
+
+
+class Command():
+    def __init__(self, d, name="", acc=None):
+        self.__dict__ = {}
+        self._name = name
+        self._acc = acc
+
+    def __call__(self, *args):
+        try:
+            if len(args) == 2:
+                self._acc.write_param(args[0], self._name, args[1])
+            else:
+                _logger.warning("Incorrect number of arguments. Ignoring")
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            raise e
+
+
+    def from_dict(self, d, name=""):
+        for key, value in d.items():
+            self.__dict__[key] = value
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
 
 if __name__ == "__main__":
     import argparse
