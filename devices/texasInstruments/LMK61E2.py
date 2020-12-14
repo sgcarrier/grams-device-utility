@@ -137,16 +137,15 @@ class LMK61E2:
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
 
-        if (1 == paramInfo["min"]) and (1 == paramInfo["max"]):
+        if (0 == paramInfo["min"]) and (0 == paramInfo["max"]):
             _logger.error(str(paramName) + " is a read-only parameter")
             return -1
 
         if (value < paramInfo["min"]) or (value > paramInfo["max"]):
-            _logger.error("{value} is an invalid value for {paramName}. " +
-                          "Must be between {min} and {max}".format(value=value,
-                                                                   paramName=paramName,
-                                                                   min=paramInfo["min"],
-                                                                   max=paramInfo["max"]))
+            _logger.error("{value} is an invalid value for {paramName}. Must be between {min} and {max}".format(value=value,
+                                                                                                                paramName=paramName,
+                                                                                                                min=paramInfo["min"],
+                                                                                                                max=paramInfo["max"]))
             return -1
 
         # Positions to appropriate bits
@@ -262,12 +261,31 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='LMK61E2 utility program.')
-    parser.add_argument('channel', help='I2C channel')
-    parser.add_argument('address', help='I2C address')
-    parser.add_argument('param', help='Parameter name')
+    parser.add_argument('channel', type=int, help='I2C channel')
+    parser.add_argument('address', type=int, help='I2C address')
+    parser.add_argument('param', type=str, help='Parameter name')
+    parser.add_argument('--value', type=int, default=0, help='Value to write (needs -w flag)')
     parser.add_argument('-w', default=False, action='store_true', help='Write flag')
     parser.add_argument('-r', default=False, action='store_true', help='Read flag')
     parser.add_argument('-s', default=False, action='store_true', help='Selftest flag')
 
     args = parser.parse_args()
-    print((args))
+
+    device = LMK61E2(i2c_ch=args.channel, i2c_addr=args.address)
+
+    if args.w:
+        device.write_param(0, args.param, args.value)
+    elif args.r:
+        ret = device.read_param(0, args.param)
+        _logger.info("Param : " + str(args.param) + ", value : " + str(ret))
+    elif args.s:
+        ret = device.selftest(0)
+        if ret == 0:
+            _logger.info("Selftest successful")
+        else:
+            _logger.info("Selftest FAILED")
+    else:
+        _logger.error("Invalid format, requires -w, -r or -s argument, see -h for help")
+        exit()
+
+
