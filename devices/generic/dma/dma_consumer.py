@@ -19,19 +19,27 @@ C_DMA_DATA_BYTE_LEN = DMA_DATA_BYTE_SIZE
 
 C_BUFFER_SIZE = C_DMA_PERIOD_SIZE * C_DMA_PERIOD_COUNT * C_DMA_DATA_BYTE_LEN
 
+# IOCTL numbers
+C_IOCTL_GET_BLOCK_INFO = 0x80086161
+C_IOCTL_RESET_STATS = 0x6162
+C_IOCTL_RESET_SINGLE_BLOCK = 0x40086163
+C_IOCTL_GET_STATS = 0x80086164
+C_IOCTL_REINIT_DMA = 0x6165
 
-driverFD = open("/dev/axi_dma_ic", 'rw')
+
+
+driverFD = open("/dev/axi_dma_ic", 'wb')
 
 if(driverFD == 0):
     print("Could not open dma. Exiting...")
     exit(2)
 
-if (fcntl.ioctl(driverFD, termios.IOCTL_REINIT_DMA) != 0):
+if (fcntl.ioctl(driverFD, C_IOCTL_REINIT_DMA) != 0):
     print("ERROR: failed to reinitialize the axi dma peripheral. killing the dma-consumer.")
     exit(3)
 
 print("INFO: resetting the dma callback stats.\n")
-if (fcntl.ioctl(driverFD, termios.IOCTL_RESET_STATS) != 0):
+if (fcntl.ioctl(driverFD, C_IOCTL_GET_STATS) != 0):
     print("ERROR: failed to reset the dma callback stats.")
 
 
