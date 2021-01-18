@@ -294,23 +294,309 @@ class LMK04610:
          "PLL2_R3_LF_SEL": { "addr":   0x71, "loc":  0, "mask":   0x0F, "regs": 1, "min": 0, "max":      15},  # PLL2_R3_LF_SEL,
          "PLL2_C3_LF_SEL": { "addr":   0x71, "loc":  4, "mask":   0xF0, "regs": 1, "min": 0, "max":      15},  # PLL2_C3_LF_SEL,
 
+              "PLL2_PROP": { "addr":   0x72, "loc":  0, "mask":   0x3F, "regs": 1, "min": 0, "max":      63},  # PLL2_PROP,
 
+              "PLL2_NDIV": {"addr":    0x73, "loc":  0, "mask": 0xFFFF, "regs": 2, "min": 0, "max":   65535},  # PLL2_NDIV,
 
+              "PLL2_RDIV": {"addr":    0x75, "loc":  0, "mask": 0xFFFF, "regs": 2, "min": 0, "max":   65535},  # PLL2_RDIV,
 
+      "PLL2_STRG_INITVAL": {"addr":    0x77, "loc":  0, "mask": 0xFFFF, "regs": 2, "min": 0, "max":   65535},  # PLL2_STRG_INITVAL,
 
+            "RAILDET_UPP": {"addr":    0x7D, "loc":  0, "mask":   0x3F, "regs": 1, "min": 0, "max":      63},  # RAILDET_UPP,
 
+            "RAILDET_LOW": {"addr":    0x7E, "loc":  0, "mask":   0x3F, "regs": 1, "min": 0, "max":      63},  # RAILDET_LOW,
 
-                  "TERM2GND_PRI": { "addr":  29, "loc": 4, "mask":     0x10, "regs": 1, "min": 0, "max":       1},  # TERM2GND_PRI,
-                  "DIFFTERM_SEC": { "addr":  29, "loc": 3, "mask":     0x08, "regs": 1, "min": 0, "max":       1},  # DIFFTERM_SEC,
-                  "DIFFTERM_PRI": { "addr":  29, "loc": 2, "mask":     0x04, "regs": 1, "min": 0, "max":       1},  # DIFFTERM_PRI,
-                   "AC_MODE_SEC": { "addr":  29, "loc": 1, "mask":     0x02, "regs": 1, "min": 0, "max":       1},  # AC_MODE_SEC,
-                   "AC_MODE_PRI": { "addr":  29, "loc": 0, "mask":     0x01, "regs": 1, "min": 0, "max":       1},  # AC_MODE_PRI,
-                    "CMOSCHPWDN": { "addr":  30, "loc": 6, "mask":     0x40, "regs": 1, "min": 0, "max":       1},  # CMOSCHPWDN,
-                       "CH7PWDN": { "addr":  30, "loc": 5, "mask":     0x20, "regs": 1, "min": 0, "max":       1},  # CH7PWDN,
-                       "CH6PWDN": { "addr":  30, "loc": 4, "mask":     0x10, "regs": 1, "min": 0, "max":       1},  # CH6PWDN,
-                       "CH5PWDN": { "addr":  30, "loc": 3, "mask":     0x08, "regs": 1, "min": 0, "max":       1},  # CH5PWDN,
-                      "CH23PWDN": { "addr":  30, "loc": 1, "mask":     0x02, "regs": 1, "min": 0, "max":       1},  # CH23PWDN,
-                      "CH01PWDN": { "addr":  30, "loc": 0, "mask":     0x01, "regs": 1, "min": 0, "max":       1},  # CH01PWDN,
+         "PLL2_FAST_ACAL": { "addr":   0x7F, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # PLL2_FAST_ACAL,
+            "PLL2_AC_REQ": { "addr":   0x7F, "loc":  1, "mask":   0x02, "regs": 1, "min": 1, "max":       1},  # PLL2_AC_REQ,
+     "PLL2_IDACSET_RECAL": { "addr":   0x7F, "loc":  2, "mask":   0x0C, "regs": 1, "min": 0, "max":       3},  # PLL2_IDACSET_RECAL,
+             "PLL2_PD_AC": { "addr":   0x7F, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # PLL2_PD_AC,
+         "PLL2_AC_CAL_EN": { "addr":   0x7F, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # PLL2_AC_CAL_EN,
+
+              "PLL2_INTG": {"addr":    0x80, "loc":  0, "mask":   0x1F, "regs": 1, "min": 0, "max":      31},  # PLL2_INTG,
+
+      "PLL2_AC_THRESHOLD": {"addr":    0x81, "loc":  0, "mask":   0x1F, "regs": 1, "min": 0, "max":      31},  # PLL2_AC_THRESHOLD,
+
+ "PLL2_AC_STRT_THRESHOLD": {"addr":    0x82, "loc":  0, "mask":   0x1F, "regs": 1, "min": 0, "max":      31},  # PLL2_AC_STRT_THRESHOLD,
+
+      "PLL2_AC_INIT_WAIT": { "addr":   0x83, "loc":  0, "mask":   0x0F, "regs": 1, "min": 0, "max":       15},  # PLL2_AC_INIT_WAIT,
+       "PLL2_AC_CMP_WAIT": { "addr":   0x83, "loc":  4, "mask":   0xF0, "regs": 1, "min": 0, "max":       15},  # PLL2_AC_CMP_WAIT,
+
+      "PLL2_AC_JUMP_STEP": {"addr":    0x84, "loc":  0, "mask":   0x0F, "regs": 1, "min": 0, "max":      15},  # PLL2_AC_JUMP_STEP,
+
+      "PLL2_LD_WNDW_SIZE": {"addr":    0x85, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":      255},  # PLL2_LD_WNDW_SIZE, for some reason, datasheet says 1-255 are reserved values
+
+"PLL2_LD_WNDW_SIZE_INITIAL": {"addr":    0x86, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # PLL2_LD_WNDW_SIZE_INITIAL, for some reason, datasheet says 1-255 are reserved values
+
+"PLL2_LOCKDET_CYC_CNT": {"addr":    0x87, "loc":  0, "mask":   0xFFFFFF, "regs": 3, "min": 0, "max":     0xFFFFFF},  # PLL2_LD_WNDW_SIZE_INITIAL,
+
+"PLL2_LOCKDET_CYC_CNT_INITIAL": {"addr":    0x8A, "loc":  0, "mask":   0xFFFFFF, "regs": 3, "min": 0, "max":     0xFFFFFF},  # PLL2_LOCKDET_CYC_CNT_INITIAL,
+
+   "SPI_SDIO_EN_PULLDOWN": { "addr":   0x8D, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_EN_PULLDOWN,
+     "SPI_SDIO_EN_PULLUP": { "addr":   0x8D, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_EN_PULLUP,
+"SPI_SDIO_OUTPUT_WEAK_DRIVE": { "addr":   0x8D, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_OUTPUT_WEAK_DRIVE,
+    "SPI_SDIO_OUTPUT_INV": { "addr":   0x8D, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_OUTPUT_INV,
+   "SPI_SDIO_OUTPUT_MUTE": { "addr":   0x8D, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_OUTPUT_MUTE,
+   "SPI_EN_THREE_WIRE_IF": { "addr":   0x8D, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":       1},  # SPI_EN_THREE_WIRE_IF,
+
+    "SPI_SCS_EN_PULLDOWN": { "addr":   0x8E, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # SPI_SCS_EN_PULLDOWN,
+      "SPI_SCS_EN_PULLUP": { "addr":   0x8E, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # SPI_SCS_EN_PULLUP,
+    "SPI_SCL_EN_PULLDOWN": { "addr":   0x8E, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # SPI_SCL_EN_PULLDOWN,
+      "SPI_SCL_EN_PULLUP": { "addr":   0x8E, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # SPI_SCL_EN_PULLUP,
+
+     "SPI_SDIO_INPUT_M12": { "addr":   0x8F, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # SPI_SDIO_INPUT_M12,
+     "SPI_SDIO_INPUT_Y12": { "addr":   0x8F, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # SPI_SDIO_INPUT_Y12,
+   "SPI_SDIO_OUTPUT_DATA": { "addr":   0x8F, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_OUTPUT_DATA,
+ "SPI_SDIO_EN_ML_INSTAGE": { "addr":   0x8F, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_EN_ML_INSTAGE,
+   "SPI_SDIO_ENB_INSTAGE": { "addr":   0x8F, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_ENB_INSTAGE,
+    "SPI_SDIO_OUTPUT_HIZ": { "addr":   0x8F, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # SPI_SDIO_OUTPUT_HIZ,
+
+      "SPI_SCL_INPUT_M12": { "addr":   0x90, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # SPI_SCL_INPUT_M12,
+      "SPI_SCL_INPUT_Y12": { "addr":   0x90, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # SPI_SCL_INPUT_Y12,
+  "SPI_SCL_EN_ML_INSTAGE": { "addr":   0x90, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # SPI_SCL_EN_ML_INSTAGE,
+    "SPI_SCL_ENB_INSTAGE": { "addr":   0x90, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # SPI_SCL_ENB_INSTAGE,
+
+      "SPI_SCS_INPUT_M12": { "addr":   0x91, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # SPI_SCS_INPUT_M12,
+      "SPI_SCS_INPUT_Y12": { "addr":   0x91, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # SPI_SCS_INPUT_Y12,
+  "SPI_SCS_EN_ML_INSTAGE": { "addr":   0x91, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # SPI_SCS_EN_ML_INSTAGE,
+    "SPI_SCS_ENB_INSTAGE": { "addr":   0x91, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # SPI_SCS_ENB_INSTAGE,
+
+    "STATUS0_EN_PULLDOWN": { "addr":   0x92, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # STATUS0_EN_PULLDOWN,
+      "STATUS0_EN_PULLUP": { "addr":   0x92, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # STATUS0_EN_PULLUP,
+"STATUS0_OUTPUT_WEAK_DRIVE": { "addr":   0x92, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # STATUS0_OUTPUT_WEAK_DRIVE,
+     "STATUS0_OUTPUT_INV": { "addr":   0x92, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # STATUS0_OUTPUT_INV,
+    "STATUS0_OUTPUT_MUTE": { "addr":   0x92, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # STATUS0_OUTPUT_MUTE,
+        "STATUS0_MUX_SEL": { "addr":   0x92, "loc":  5, "mask":   0xE0, "regs": 1, "min": 0, "max":       7},  # STATUS0_MUX_SEL,
+
+    "STATUS1_EN_PULLDOWN": { "addr":   0x93, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # STATUS1_EN_PULLDOWN,
+      "STATUS1_EN_PULLUP": { "addr":   0x93, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # STATUS1_EN_PULLUP,
+"STATUS1_OUTPUT_WEAK_DRIVE": { "addr":   0x93, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # STATUS1_OUTPUT_WEAK_DRIVE,
+     "STATUS1_OUTPUT_INV": { "addr":   0x93, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # STATUS1_OUTPUT_INV,
+    "STATUS1_OUTPUT_MUTE": { "addr":   0x93, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # STATUS1_OUTPUT_MUTE,
+        "STATUS1_MUX_SEL": { "addr":   0x93, "loc":  5, "mask":   0xE0, "regs": 1, "min": 0, "max":       7},  # STATUS1_MUX_SEL,
+
+        "STATUS1_INT_MUX": {"addr":    0x94, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":      18},  # STATUS1_INT_MUX,
+
+        "STATUS0_INT_MUX": {"addr":    0x95, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":      18},  # STATUS0_INT_MUX,
+
+   "PLL2_REF_STATCLK_DIV": {"addr":    0x96, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # PLL2_REF_STATCLK_DIV,
+        "PLL2_REF_CLK_EN": {"addr":    0x96, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":      1},  # PLL2_REF_CLK_EN,
+
+     "STATUS0_INPUT_M12": { "addr":   0x97, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # STATUS0_INPUT_M12,
+     "STATUS0_INPUT_Y12": { "addr":   0x97, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # STATUS0_INPUT_Y12,
+   "STATUS0_OUTPUT_DATA": { "addr":   0x97, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # STATUS0_OUTPUT_DATA,
+ "STATUS0_EN_ML_INSTAGE": { "addr":   0x97, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # STATUS0_EN_ML_INSTAGE,
+   "STATUS0_ENB_INSTAGE": { "addr":   0x97, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # STATUS0_ENB_INSTAGE,
+    "STATUS0_OUTPUT_HIZ": { "addr":   0x97, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # STATUS0_OUTPUT_HIZ,
+
+     "STATUS1_INPUT_M12": { "addr":   0x98, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # STATUS1_INPUT_M12,
+     "STATUS1_INPUT_Y12": { "addr":   0x98, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # STATUS1_INPUT_Y12,
+   "STATUS1_OUTPUT_DATA": { "addr":   0x98, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # STATUS1_OUTPUT_DATA,
+ "STATUS1_EN_ML_INSTAGE": { "addr":   0x98, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # STATUS1_EN_ML_INSTAGE,
+   "STATUS1_ENB_INSTAGE": { "addr":   0x98, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # STATUS1_ENB_INSTAGE,
+    "STATUS1_OUTPUT_HIZ": { "addr":   0x98, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # STATUS1_OUTPUT_HIZ,
+
+      "SYNC_EN_PULLDOWN": { "addr":   0x99, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # SYNC_EN_PULLDOWN,
+        "SYNC_EN_PULLUP": { "addr":   0x99, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # SYNC_EN_PULLUP,
+"SYNC_OUTPUT_WEAK_DRIVE": { "addr":   0x99, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # SYNC_OUTPUT_WEAK_DRIVE,
+       "SYNC_OUTPUT_INV": { "addr":   0x99, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # SYNC_OUTPUT_INV,
+      "SYNC_OUTPUT_MUTE": { "addr":   0x99, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # SYNC_OUTPUT_MUTE,
+          "SYNC_MUX_SEL": { "addr":   0x99, "loc":  5, "mask":   0xE0, "regs": 1, "min": 0, "max":       7},  # SYNC_MUX_SEL,
+
+ "CLKINSEL1_EN_PULLDOWN": { "addr":   0x9B, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # CLKINSEL1_EN_PULLDOWN,
+   "CLKINSEL1_EN_PULLUP": { "addr":   0x9B, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CLKINSEL1_EN_PULLUP,
+
+   "CLKINSEL1_INPUT_M12": { "addr":   0x9C, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # CLKINSEL1_INPUT_M12,
+   "CLKINSEL1_INPUT_Y12": { "addr":   0x9C, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # CLKINSEL1_INPUT_Y12,
+"CLKINSEL1_EN_ML_INSTAGE": { "addr":   0x9C, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # CLKINSEL1_EN_ML_INSTAGE,
+ "CLKINSEL1_ENB_INSTAGE": { "addr":   0x9C, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # CLKINSEL1_ENB_INSTAGE,
+
+"PLL1_TSTMODE_REF_FB_EN": { "addr":   0xAC, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":       1},  # PLL1_TSTMODE_REF_FB_EN,
+
+            "PD_VCO_LDO": { "addr":   0xAD, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":       3},  # PD_VCO_LDO,
+"PLL2_TSTMODE_REF_FB_EN": { "addr":   0xAD, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # PLL2_TSTMODE_REF_FB_EN,
+        "RESET_PLL2_DLD": { "addr":   0xAD, "loc":  4, "mask":   0x30, "regs": 1, "min": 0, "max":       3},  # RESET_PLL2_DLD,
+
+          "PLL1_LCK_DET": { "addr":   0xBE, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # PLL1_LCK_DET,
+          "PLL2_LCK_DET": { "addr":   0xBE, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # PLL2_LCK_DET,
+          "HOLDOVER_LOS": { "addr":   0xBE, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       0},  # HOLDOVER_LOS,
+          "HOLDOVER_LOL": { "addr":   0xBE, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       0},  # HOLDOVER_LOL,
+          "HOLDOVER_DLD": { "addr":   0xBE, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       0},  # HOLDOVER_DLD,
+                   "LOS": { "addr":   0xBE, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       0},  # LOS,
+
+           "PLL2_DLD_EN": { "addr":   0xF6, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # PLL2_DLD_EN,
+
+     "PLL2_DUAL_LOOP_EN": { "addr":   0xF7, "loc":  5, "mask":   0x60, "regs": 1, "min": 0, "max":       3},  # PLL2_DUAL_LOOP_EN,
+
+              "CH1_DDLY": { "addr":   0xFD, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH1_DDLY,
+              "CH2_DDLY": { "addr":   0xFF, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH2_DDLY,
+             "CH34_DDLY": { "addr":  0x101, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH34_DDLY,
+              "CH5_DDLY": { "addr":  0x103, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH5_DDLY,
+              "CH6_DDLY": { "addr":  0x105, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH6_DDLY,
+             "CH78_DDLY": { "addr":  0x107, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH78_DDLY,
+              "CH9_DDLY": { "addr":  0x109, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH9_DDLY,
+             "CH10_DDLY": { "addr":  0x10B, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     255},  # CH10_DDLY,
+
+           "CH1_ADLY_EN": { "addr":  0x10D, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH1_ADLY_EN,
+              "CH1_ADLY": { "addr":  0x10D, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH1_ADLY,
+
+           "CH2_ADLY_EN": { "addr":  0x10E, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH2_ADLY_EN,
+              "CH2_ADLY": { "addr":  0x10E, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH2_ADLY,
+
+           "CH3_ADLY_EN": { "addr":  0x110, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH3_ADLY_EN,
+              "CH3_ADLY": { "addr":  0x110, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH3_ADLY,
+
+           "CH4_ADLY_EN": { "addr":  0x111, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH4_ADLY_EN,
+              "CH4_ADLY": { "addr":  0x111, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH4_ADLY,
+
+           "CH5_ADLY_EN": { "addr":  0x112, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH5_ADLY_EN,
+              "CH5_ADLY": { "addr":  0x112, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH5_ADLY,
+
+           "CH6_ADLY_EN": { "addr":  0x115, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH6_ADLY_EN,
+              "CH6_ADLY": { "addr":  0x115, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH6_ADLY,
+
+           "CH7_ADLY_EN": { "addr":  0x116, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH7_ADLY_EN,
+              "CH7_ADLY": { "addr":  0x116, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH7_ADLY,
+
+           "CH8_ADLY_EN": { "addr":  0x117, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH8_ADLY_EN,
+              "CH8_ADLY": { "addr":  0x117, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH8_ADLY,
+
+           "CH9_ADLY_EN": { "addr":  0x119, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # CH9_ADLY_EN,
+              "CH9_ADLY": { "addr":  0x119, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      31},  # CH9_ADLY,
+
+          "CH10_ADLY_EN": { "addr":  0x11A, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":      1},  # CH10_ADLY_EN,
+             "CH10_ADLY": { "addr":  0x11A, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":     31},  # CH10_ADLY,
+
+                "CLKMUX": { "addr":  0x124, "loc":  0, "mask":   0x0F, "regs": 1, "min": 0, "max":     15},  # CLKMUX,
+
+           "DRIV_1_SLEW": { "addr":  0x127, "loc":  2, "mask":   0x0C, "regs": 1, "min": 0, "max":      3},  # DRIV_1_SLEW,
+             "HS_EN_CH1": { "addr":  0x127, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH1,
+           "SYNC_EN_CH1": { "addr":  0x127, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH1,
+"SYSREF_BYP_ANALOGDLY_GATING_CH1": { "addr":  0x127, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH1,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH1": { "addr":  0x127, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH1,
+
+           "DRIV_2_SLEW": { "addr":  0x128, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":      3},  # DRIV_2_SLEW,
+             "HS_EN_CH2": { "addr":  0x128, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH2,
+           "SYNC_EN_CH2": { "addr":  0x128, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH2,
+"SYSREF_BYP_ANALOGDLY_GATING_CH2": { "addr":  0x128, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH2,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH2": { "addr":  0x128, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH2,
+
+           "DRIV_3_SLEW": { "addr":  0x129, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":      3},  # DRIV_3_SLEW,
+           "DRIV_4_SLEW": { "addr":  0x129, "loc":  2, "mask":   0x0C, "regs": 1, "min": 0, "max":      3},  # DRIV_4_SLEW,
+             "HS_EN_CH3_4": { "addr":  0x129, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH3_4,
+           "SYNC_EN_CH3_4": { "addr":  0x129, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH3_4,
+"SYSREF_BYP_ANALOGDLY_GATING_CH3_4": { "addr":  0x129, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH3_4,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH4_4": { "addr":  0x129, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH3_4,
+
+           "DRIV_5_SLEW": { "addr":  0x12A, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":      3},  # DRIV_5_SLEW,
+             "HS_EN_CH5": { "addr":  0x12A, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH5,
+           "SYNC_EN_CH5": { "addr":  0x12A, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH5,
+"SYSREF_BYP_ANALOGDLY_GATING_CH5": { "addr":  0x12A, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH5,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH5": { "addr":  0x12A, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH5,
+
+           "DRIV_6_SLEW": { "addr":  0x12B, "loc":  2, "mask":   0x0C, "regs": 1, "min": 0, "max":      3},  # DRIV_6_SLEW,
+             "HS_EN_CH6": { "addr":  0x12B, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH6,
+           "SYNC_EN_CH6": { "addr":  0x12B, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH6,
+"SYSREF_BYP_ANALOGDLY_GATING_CH6": { "addr":  0x12B, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH6,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH6": { "addr":  0x12B, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH6,
+
+           "DRIV_7_SLEW": { "addr":  0x12C, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":      3},  # DRIV_7_SLEW,
+           "DRIV_8_SLEW": { "addr":  0x12C, "loc":  2, "mask":   0x0C, "regs": 1, "min": 0, "max":      3},  # DRIV_8_SLEW,
+             "HS_EN_CH7_8": { "addr":  0x12C, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH7_8,
+           "SYNC_EN_CH7_8": { "addr":  0x12C, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH7_8,
+"SYSREF_BYP_ANALOGDLY_GATING_CH7_8": { "addr":  0x12C, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH7_8,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH7_8": { "addr":  0x12C, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH7_8,
+
+           "DRIV_9_SLEW": { "addr":  0x12D, "loc":  2, "mask":   0x0C, "regs": 1, "min": 0, "max":      3},  # DRIV_9_SLEW,
+             "HS_EN_CH9": { "addr":  0x12D, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH9,
+           "SYNC_EN_CH9": { "addr":  0x12D, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH9,
+"SYSREF_BYP_ANALOGDLY_GATING_CH9": { "addr":  0x12D, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH9,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH9": { "addr":  0x12D, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH9,
+
+           "DRIV_10_SLEW": { "addr":  0x12E, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":      3},  # DRIV_10_SLEW,
+             "HS_EN_CH10": { "addr":  0x12E, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH10,
+           "SYNC_EN_CH10": { "addr":  0x12E, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH10,
+"SYSREF_BYP_ANALOGDLY_GATING_CH10": { "addr":  0x12E, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH10,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH10": { "addr":  0x12E, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH10,
+
+           "DYN_DDLY_CH1": { "addr":  0x130, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH1,
+
+           "DYN_DDLY_CH2": { "addr":  0x131, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH2,
+
+           "DYN_DDLY_CH3": { "addr":  0x133, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH3,
+
+           "DYN_DDLY_CH4": { "addr":  0x134, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH4,
+
+           "DYN_DDLY_CH5": { "addr":  0x135, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH5,
+
+           "DYN_DDLY_CH6": { "addr":  0x138, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH6,
+
+           "DYN_DDLY_CH7": { "addr":  0x139, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH7,
+
+           "DYN_DDLY_CH8": { "addr":  0x13A, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH8,
+
+           "DYN_DDLY_CH9": { "addr":  0x13C, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH9,
+
+          "DYN_DDLY_CH10": { "addr":  0x13D, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":      7},  # DYN_DDLY_CH10,
+
+    "OUTCH_SYSREF_PLSCNT": { "addr":  0x140, "loc":  0, "mask":   0x3F, "regs": 1, "min": 0, "max":     63},  # OUTCH_SYSREF_PLSCNT,
+
+           "SYNC_INT_MUX": { "addr":  0x141, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":     18},  # SYNC_INT_MUX,
+
+         "SYNC_INPUT_M12": { "addr":  0x142, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       0},  # SYNC_INPUT_M12,
+         "SYNC_INPUT_Y12": { "addr":  0x142, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       0},  # SYNC_INPUT_Y12,
+       "SYNC_OUTPUT_DATA": { "addr":  0x142, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # SYNC_OUTPUT_DATA,
+     "SYNC_EN_ML_INSTAGE": { "addr":  0x142, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # SYNC_EN_ML_INSTAGE,
+       "SYNC_ENB_INSTAGE": { "addr":  0x142, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # SYNC_ENB_INSTAGE,
+        "SYNC_OUTPUT_HIZ": { "addr":  0x142, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # SYNC_OUTPUT_HIZ,
+
+           "FBBUF_CH6_EN": { "addr":  0x143, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # FBBUF_CH6_EN,
+           "FBBUF_CH5_EN": { "addr":  0x143, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # FBBUF_CH5_EN,
+
+      "PLL2_FBDIV_MUXSEL": { "addr":  0x146, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":       0},  # PLL2_FBDIV_MUXSEL,
+         "PLL2_PRESCALER": { "addr":  0x146, "loc":  2, "mask":   0x3C, "regs": 1, "min": 0, "max":      15},  # PLL2_PRESCALER,
+   "PLL2_NBYPASS_DIV2_FB": { "addr":  0x146, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # PLL2_NBYPASS_DIV2_FB,
+
+  "PLL1_STATUS0_HOLDOVER": { "addr":  0x149, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # PLL1_STATUS0_HOLDOVER,
+  "PLL1_STATUS1_HOLDOVER": { "addr":  0x149, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # PLL1_STATUS1_HOLDOVER,
+     "PLL1_SYNC_HOLDOVER": { "addr":  0x149, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # PLL1_SYNC_HOLDOVER,
+"PLL1_CLKINSEL1_ML_HOLDOVER": { "addr":  0x149, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # PLL1_CLKINSEL1_ML_HOLDOVER,
+
+               "SYNC_INV": { "addr":  0x14A, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # SYNC_INV,
+      "SYNC_ANALOGDLY_EN": { "addr":  0x14A, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # SYNC_ANALOGDLY_EN,
+         "SYNC_ANALOGDLY": { "addr":  0x14A, "loc":  2, "mask":   0x7C, "regs": 1, "min": 0, "max":      63},  # SYNC_ANALOGDLY,
+
+        "DYN_DDLY_CH6_EN": { "addr":  0x14B, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH6_EN,
+        "DYN_DDLY_CH7_EN": { "addr":  0x14B, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH7_EN,
+        "DYN_DDLY_CH8_EN": { "addr":  0x14B, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH8_EN,
+        "DYN_DDLY_CH9_EN": { "addr":  0x14B, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH9_EN,
+       "DYN_DDLY_CH10_EN": { "addr":  0x14B, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH10_EN,
+
+        "DYN_DDLY_CH1_EN": { "addr":  0x14C, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH1_EN,
+        "DYN_DDLY_CH2_EN": { "addr":  0x14C, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH2_EN,
+        "DYN_DDLY_CH3_EN": { "addr":  0x14C, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH3_EN,
+        "DYN_DDLY_CH4_EN": { "addr":  0x14C, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH4_EN,
+        "DYN_DDLY_CH5_EN": { "addr":  0x14C, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # DYN_DDLY_CH5_EN,
+
+          "SYSREF_EN_CH1": { "addr":  0x14E, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH1,
+          "SYSREF_EN_CH2": { "addr":  0x14E, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH2,
+        "SYSREF_EN_CH3_4": { "addr":  0x14E, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH3_4,
+          "SYSREF_EN_CH5": { "addr":  0x14E, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH5,
+          "SYSREF_EN_CH6": { "addr":  0x14E, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH6,
+        "SYSREF_EN_CH7_8": { "addr":  0x14E, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH7_8,
+          "SYSREF_EN_CH9": { "addr":  0x14E, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH9,
+         "SYSREF_EN_CH10": { "addr":  0x14E, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":       1},  # SYSREF_EN_CH10,
+
+    "PLL2_PROG_PFD_RESET": { "addr":  0x150, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":       7},  # PLL2_PROG_PFD_RESET,
+    "PLL2_PFD_DIS_SAMPLE": { "addr":  0x150, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # PLL2_PFD_DIS_SAMPLE,
+
+             "PLL2_CPROP": { "addr":  0x151, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":       3},  # PLL2_CPROP,
+  "PLL2_CP_EN_SAMPLE_BYP": { "addr":  0x151, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":       1},  # PLL2_CP_EN_SAMPLE_BYP,
+             "PLL2_RFILT": { "addr":  0x151, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":       1},  # PLL2_RFILT,
+
+           "PLL2_CSAMPLE": { "addr":  0x152, "loc":  0, "mask":   0x07, "regs": 1, "min": 0, "max":       7},  # PLL2_CSAMPLE,
+         "PLL2_EN_FILTER": { "addr":  0x152, "loc":  3, "mask":   0x08, "regs": 1, "min": 0, "max":       1},  # PLL2_EN_FILTER,
+
+             "PLL2_CFILT": { "addr":  0x153, "loc":  0, "mask":   0x1F, "regs": 1, "min": 0, "max":       31}  # PLL2_CFILT,
 }
 
     ADDRESS_INFO = []
