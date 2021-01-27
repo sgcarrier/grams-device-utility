@@ -1,0 +1,112 @@
+{
+  "analogDevices": {
+    "AD5668": {
+      "ADDRESS_INFO": [
+        {
+          "path": "",
+          "mode": 0
+        },
+        {
+          "path": "",
+          "mode": 0
+        }
+      ],
+      "independent": false
+    }
+
+  },
+  "texasInstruments": {
+    "LMK61E2": {
+      "ADDRESS_INFO": [
+        {
+          "ch": 0,
+          "addr": 88
+        },
+        {
+          "ch": 0,
+          "addr": 89
+        },
+        {
+          "ch": 1,
+          "addr": 88
+        },
+        {
+          "ch": 1,
+          "addr": 89
+        },
+        {
+          "ch": 0,
+          "addr": 90
+        },
+        {
+          "ch": 1,
+          "addr": 90
+        }
+      ],
+      "independent": false,
+      "GPIO_PINS": [{
+        "WIND_OSC_OE" : 417,
+        "PLL_H0_OE"   : 395,
+        "PLL_H1_OE"   : 396
+      }]
+    },
+    "LMK03318": {
+      "ADDRESS_INFO": [
+        {
+          "ch": 1,
+          "addr": 80
+        }
+      ],
+      "independent": false,
+      "GPIO_PINS": [{
+        "PDN"    : 398,
+        "CFGSEL0": 407,
+        "CFGSEL1": 408,
+        "SYNC"   : 420
+      }]
+    },
+    "LMK04610": {
+      "ADDRESS_INFO": [
+        {
+          "path": "",
+          "mode": 0
+        }
+      ],
+      "independent": false,
+      "GPIO_PINS": [{
+        "SYNC"    : 416,
+        "RESET"   : 413,
+        "STATUS_0": 414,
+        "STATUS_1": 415
+      }]
+    },
+    "TCA9539": {
+      "ADDRESS_INFO": [
+        {
+          "ch": 0,
+          "addr": 119
+        }
+      ],
+      "independent": false
+    },
+    "LMK01020": {
+      "ADDRESS_INFO": [
+        {
+          "path": "",
+          "mode": 0
+        },
+        {
+          "path": "",
+          "mode": 0
+        }
+      ],
+      "independent": false,
+      "GPIO_PINS": [{
+        "WIND_GOE"    : 401,
+        "WIND_SYNC"   : 399,
+        "TRIG_GOE"    : 402,
+        "TRIG_SYNC"   : 400
+      }]
+    }
+  }
+}
