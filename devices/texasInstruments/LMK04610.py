@@ -455,6 +455,7 @@ class LMK04610:
 
         if path and mode:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
+            _logger.debug("Instantiated LMK04610 device with path: " + str(path) + " and mode: " + str(mode))
         self.from_dict_plat()
 
         self.LMK04610CurParams = [0] * 14
@@ -469,6 +470,7 @@ class LMK04610:
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})
+        _logger.debug("Added LMK04610 device with path: " + str(channel) + " and mode: " + str(address))
 
     def __repr__(self):
         return self._name
@@ -530,7 +532,9 @@ class LMK04610:
         self.LMK04610CurParams[paramInfo['addr']] = (~paramInfo['mask'] & self.LMK01020CurParams[paramInfo['addr']]) | value
 
         with SPI(spi_path, spi_mode, 1000000) as spi:
+            # Dont forget to convert to big endian!
             writeBuf = self.LMK04610CurParams[paramInfo['addr']].to_bytes(4, 'big')
+            _logger.debug("About to write raw data: " + str(writeBuf))
             spi.transfer(writeBuf)
 
         return 0

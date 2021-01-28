@@ -100,6 +100,7 @@ class AD5668:
 
         with SPI(spi_path, spi_mode, 1000000) as spi:
             writeBuf = self.swap_32bits(value).to_bytes(4, 'big')
+            _logger.debug("About to write raw data: " + str(writeBuf))
             spi.transfer(writeBuf)
 
         return 0

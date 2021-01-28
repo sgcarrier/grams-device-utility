@@ -204,6 +204,7 @@ class LMK03318:
         self.__dict__ = {}
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
+            _logger.debug("Instantiated LMK03318 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
         self.from_dict_plat()
 
     def from_dict_plat(self):
@@ -213,6 +214,7 @@ class LMK03318:
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
+        _logger.debug("Added LMK03318 device with ch: " + str(channel) + " and addr: " + str(address))
 
     def __repr__(self):
         return self._name
@@ -308,6 +310,7 @@ class LMK03318:
             for i in range(paramInfo["regs"]-1):
                 writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
+            _logger.debug("About to write raw data: " + str(writeBuf))
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
             bus.close()
         except FileNotFoundError as e:

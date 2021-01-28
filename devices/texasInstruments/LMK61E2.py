@@ -65,6 +65,7 @@ class LMK61E2:
         self.__dict__ = {}
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
+            _logger.debug("Instantiated LMK61E2 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
         self.from_dict_plat()
 
     def from_dict_plat(self):
@@ -74,6 +75,7 @@ class LMK61E2:
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
+        _logger.debug("Added LMK61E2 device with ch: " + str(channel) + " and addr: " + str(address))
 
     def __repr__(self):
         return self._name
@@ -162,6 +164,7 @@ class LMK61E2:
             for i in range(paramInfo["regs"]-1):
                 writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
 
+            _logger.debug("About to write raw data: " + str(writeBuf))
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
             bus.close()
         except FileNotFoundError as e:
@@ -176,6 +179,7 @@ class LMK61E2:
     # Example: XO_CAPCTRL orders its bits in reverse register order compared to others
     def register_exceptions(self, paramInfo, value):
         if paramInfo['addr'] == 16:
+            _logger.debug("Applying exception register format to register XO_CAPCTRL")
             tmp = value & 0x30
             value <<= 2
             value &= paramInfo['mask']
@@ -187,7 +191,7 @@ class LMK61E2:
 
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
-        val = self.read_param(i2c_ch, i2c_addr, "VNDRID")
+        val = self.read_param(devNum, "VNDRID")
 
         if (val != 0x100B):
             _logger.error("Self-test for device on channel: " + str(i2c_ch) + " at address: " + str(i2c_addr) + " failed")

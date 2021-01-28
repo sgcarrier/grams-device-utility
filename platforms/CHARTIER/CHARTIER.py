@@ -90,11 +90,11 @@ class CHARTIER():
             c = getattr(m, class_name)
             return c
         except ImportError:
-            print(module_name)
-            print("Error, could not import module from string")
+            _logger.error(module_name)
+            _logger.error("Error, could not import module from string")
             return None
         except AttributeError:
-            print("Error, could not import class from string")
+            _logger.error("Error, could not import class from string")
             return None
 
     def dict2str(self, d):
@@ -117,7 +117,7 @@ class CHARTIER():
                             report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=devName, Path=addr['path'], Mode=addr['mode']))
                     report += '-' * 30 + "\n"
                 else:
-                    report += ('{DeviceName: <10} :: [NO DEFINED ADDR])\n'.format(DeviceName=devName))
+                    report += ('{DeviceName: <10} :: [N/A])\n'.format(DeviceName=devName))
                     report += '-' * 30 + "\n"
 
         return report

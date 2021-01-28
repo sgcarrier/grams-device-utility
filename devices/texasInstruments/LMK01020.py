@@ -67,6 +67,7 @@ class LMK01020:
 
         if path and mode:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
+            _logger.debug("Instantiated LMK01020 device with path: " + str(path) + " and mode: " + str(mode))
         self.from_dict_plat()
 
         self.LMK01020CurParams = [0] * 15
@@ -81,6 +82,7 @@ class LMK01020:
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})
+        _logger.debug("Added LMK01020 device with path: " + str(channel) + " and mode: " + str(address))
 
     def __repr__(self):
         return self._name
@@ -136,6 +138,7 @@ class LMK01020:
 
         with SPI(spi_path, spi_mode, 1000000) as spi:
             writeBuf = self.LMK01020CurParams[paramInfo['addr']].to_bytes(4, 'big')
+            _logger.debug("About to write raw data: " + str(writeBuf))
             spi.transfer(writeBuf)
 
         return 0
