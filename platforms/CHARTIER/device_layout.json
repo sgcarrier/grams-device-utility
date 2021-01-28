@@ -13,7 +13,6 @@
       ],
       "independent": false
     }
-
   },
   "texasInstruments": {
     "LMK61E2": {
@@ -106,6 +105,37 @@
         "WIND_SYNC"   : 399,
         "TRIG_GOE"    : 402,
         "TRIG_SYNC"   : 400
+      }]
+    }
+  },
+  "generic": {
+    "GEN_GPIO":    {
+      "independent": false,
+      "GPIO_PINS": [{
+        "PLL_H0_OE"                 : 395,
+        "PLL_H1_OE"                 : 396,
+        "TDC_OSC_OE"                : 397,
+        "CLK_SYNTH_RST"             : 398,
+        "FMC_WIND_CLK_DIV_SYNC"     : 399,
+        "FMC_TRIG_CLK_DIV_SYNC"     : 400,
+        "FMC_WIND_CLK_DIV_GOE"      : 401,
+        "FMC_TRIG_CLK_DIV_GOE"      : 402,
+        "SYNC"                      : 403,
+        "REINIT"                    : 404,
+        "FMC_DATA_BUF_EQ"           : 405,
+        "FMC_DATA_BUF_PE"           : 406,
+        "CLK_SYNTH_CFGSEL0"         : 407,
+        "CLK_SYNTH_CFGSEL1"         : 408,
+        "FMC_CLK_RET_EQ"            : 409,
+        "FMC_CLK_RET_PE"            : 410,
+        "FMC_CMD_BUF_EQ"            : 411,
+        "FMC_CMD_BUF_PE"            : 412,
+        "FMC_COARSE_DELAY_RESET"    : 413,
+        "FMC_COARSE_DELAY_SYNC"     : 416,
+        "WIND_OSC_OE"               : 417,
+        "SMA_OUT_0"                 : 418,
+        "SMA_OUT_1"                 : 419,
+        "FMC_CLOCK_SYNTH_SYNC"      : 420
       }]
     }
   }

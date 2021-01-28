@@ -106,13 +106,26 @@ class BLIET():
         report += '-' * 30 + "\n"
         for manu, dev in layout.items():
             for devName, attr in dev.items():
-                for addr in attr['addr']:
-                    report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=devName, Channel=addr['ch'], Address=addr['addr']))
+                for addr in attr['ADDRESS_INFO']:
+                    if "ch" in addr:
+                        report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=devName, Channel=addr['ch'], Address=addr['addr']))
+                    elif "path" in addr:
+                        report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=devName, Path=addr['path'], Mode=addr['mode']))
                 report += '-' * 30 + "\n"
 
         return report
 
 if __name__ == "__main__":
+    import sys
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root.addHandler(handler)
+
     b = BLIET()
 
     test = b.LMK03318.LOL()

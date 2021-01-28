@@ -69,10 +69,10 @@ class LMK01020:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
         self.from_dict_plat()
 
-        self.LMK01020CurParams = [0] * 14
+        self.LMK01020CurParams = [0] * 15
 
-        self.LMK01020CurParams[9] = 0x22A00;
-        self.LMK01020CurParams[14] = 0x40000000;
+        self.LMK01020CurParams[9] = 0x22A00
+        self.LMK01020CurParams[14] = 0x40000000
 
     def from_dict_plat(self):
         for key, value in self.REGISTERS_INFO.items():
