@@ -106,19 +106,25 @@ class CHARTIER():
     def layout2Report(self, layout, boardName):
         report = "\n========== DEVICE LAYOUT REPORT ==========\n"
         report += "Board Name : {BoardName: <20} \n".format(BoardName=boardName)
-        report += '-' * 30 + "\n"
-        for manu, dev in layout.items():
-            for devName, attr in dev.items():
-                if 'ADDRESS_INFO' in attr:
-                    for addr in attr['ADDRESS_INFO']:
-                        if "ch" in addr:
-                            report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=devName, Channel=addr['ch'], Address=addr['addr']))
-                        elif "path" in addr:
-                            report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=devName, Path=addr['path'], Mode=addr['mode']))
-                    report += '-' * 30 + "\n"
-                else:
-                    report += ('{DeviceName: <10} :: [N/A])\n'.format(DeviceName=devName))
-                    report += '-' * 30 + "\n"
+        report += '-' * 80 + "\n"
+        for devName, dev in self.__dict__.items():
+            if hasattr(dev, "device_summary"):
+                report += dev.device_summary()
+                report += '-' * 80 + "\n"
+        # for manu, dev in layout.items():
+        #     for devName, attr in dev.items():
+        #         report += attr.device_summary()
+        #         report += '-' * 30 + "\n"
+        #         # if 'ADDRESS_INFO' in attr:
+        #         #     for addr in attr['ADDRESS_INFO']:
+        #         #         if "ch" in addr:
+        #         #             report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=devName, Channel=addr['ch'], Address=addr['addr']))
+        #         #         elif "path" in addr:
+        #         #             report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=devName, Path=addr['path'], Mode=addr['mode']))
+        #         #     report += '-' * 30 + "\n"
+        #         # else:
+        #         #     report += ('{DeviceName: <10} :: [N/A])\n'.format(DeviceName=devName))
+        #         #     report += '-' * 30 + "\n"
 
         return report
 

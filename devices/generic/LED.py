@@ -5,27 +5,34 @@ from periphery import GPIO
 
 _logger = logging.getLogger(__name__)
 
-class GEN_GPIO:
+class LED:
 
-    DEVICE_NAME = "GEN_GPIO"
+    DEVICE_NAME = "LED"
+
+    DEVICE_TYPE = "GPIO"
+
+    ADDRESS_INFO = []
     GPIO_PINS = {}
 
 
-
-
-    def __init__(self, name="GEN_GPIO"):
+    def __init__(self, name="LED"):
         self.__dict__ = {}
         self._name = name
-        #self.from_dict_plat()
-
-    # def from_dict_plat(self):
-    #     for key, value in self.REGISTERS_INFO.items():
-    #         value = Command(value, str(key), self)
-    #         self.__dict__[key] = value
 
     def device_summary(self):
         report = ('{DeviceName: <10} :: N/A\n'.format(DeviceName=self._name))
         return report
+
+    def __call__(self, *args):
+        try:
+            if len(args) == 2:
+                self.set(args[0], args[1])
+            else:
+                _logger.warning("Incorrect number of arguments. Ignoring")
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            raise e
+
 
     def __repr__(self):
         return self._name
@@ -37,13 +44,13 @@ class GEN_GPIO:
         return self.__dict__[key]
 
 
-    def gpio_set(self, name, value):
+    def set(self, pinNum, value):
         if not self.GPIO_PINS:
             _logger.warning("No gpio pins defined. Aborting...")
             return -1
 
-        if name in self.GPIO_PINS[0]:
-            pin = self.GPIO_PINS[0][name]
+        if pinNum < len(self.ADDRESS_INFO):
+            pin = self.ADDRESS_INFO[pinNum]
             g = GPIO(pin, "out")
             g.write(value)
             g.close()
@@ -62,9 +69,9 @@ class Command():
     def __call__(self, *args):
         try:
             if len(args) == 2:
-                self._acc.write_param(args[0], self._name, args[1])
+                self._acc.set(args[0], args[1])
             elif len(args) == 1:
-                return self._acc.read_param(args[0], self._name)
+                return self._acc.get(args[0], self._name)
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
         except Exception as e:

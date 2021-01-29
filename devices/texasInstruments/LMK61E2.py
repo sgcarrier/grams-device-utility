@@ -61,8 +61,8 @@ class LMK61E2:
     GPIO_PINS = {}
 
     def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK61E2"):
-        self._name = name
         self.__dict__ = {}
+        self._name = name
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
             _logger.debug("Instantiated LMK61E2 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
@@ -76,6 +76,12 @@ class LMK61E2:
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
         _logger.debug("Added LMK61E2 device with ch: " + str(channel) + " and addr: " + str(address))
+
+    def device_summary(self):
+        report = ""
+        for addr in self.ADDRESS_INFO:
+            report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=self._name, Channel=addr['ch'], Address=addr['addr']))
+        return report
 
     def __repr__(self):
         return self._name

@@ -135,7 +135,15 @@
         "WIND_OSC_OE"               : 417,
         "SMA_OUT_0"                 : 418,
         "SMA_OUT_1"                 : 419,
-        "FMC_CLOCK_SYNTH_SYNC"      : 420
+        "FMC_CLOCK_SYNTH_SYNC"      : 420,
+        "DIP0"                      : 504,
+        "DIP1"                      : 505,
+        "DIP2"                      : 506,
+        "DIP3"                      : 507,
+        "DIP4"                      : 508,
+        "DIP5"                      : 509,
+        "DIP6"                      : 510,
+        "DIP7"                      : 511
       }]
     }
   }

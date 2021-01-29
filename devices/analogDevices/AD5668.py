@@ -26,8 +26,8 @@ class AD5668:
     GPIO_PINS = {}
 
     def __init__(self, path=None, mode=None, name="AD5668"):
-        self._name = name
         self.__dict__ = {}
+        self._name = name
 
         if path and mode:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
@@ -40,6 +40,14 @@ class AD5668:
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})
+
+    def device_summary(self):
+        report = ""
+        for addr in self.ADDRESS_INFO:
+            report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=self._name, Path=addr['path'], Mode=addr['mode']))
+        return report
+
+
 
     def __repr__(self):
         return self._name
@@ -145,6 +153,12 @@ class Command():
     def from_dict(self, d, name=""):
         for key, value in d.items():
             self.__dict__[key] = value
+
+    def device_summary(self):
+        report = ""
+        for addr in self._acc.ADDRESS_INFO:
+            report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=self._name, Path=addr['path'], Mode=addr['mode']))
+        return report
 
     def __repr__(self):
         return self._name
