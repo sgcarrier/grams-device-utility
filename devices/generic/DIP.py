@@ -5,9 +5,9 @@ from periphery import GPIO
 
 _logger = logging.getLogger(__name__)
 
-class LED:
+class DIP:
 
-    DEVICE_NAME = "LED"
+    DEVICE_NAME = "DIP"
 
     DEVICE_TYPE = "GPIO"
 
@@ -15,7 +15,7 @@ class LED:
     GPIO_PINS = {}
 
 
-    def __init__(self, name="LED"):
+    def __init__(self, name="DIP"):
         self.__dict__ = {}
         self._name = name
 
@@ -25,8 +25,8 @@ class LED:
 
     def __call__(self, *args):
         try:
-            if len(args) == 2:
-                self.set(args[0], args[1])
+            if len(args) == 1:
+                self.get(args[0])
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
         except Exception as e:
@@ -47,19 +47,18 @@ class LED:
         # No selftests to be done, skipping
         return 1
 
-    def set(self, pinName, value):
+
+    def get(self, pinName, value):
         if not self.GPIO_PINS:
             _logger.warning("No gpio pins defined. Aborting...")
             return -1
 
-
-            #g = GPIO(pinNum, "out")
         if pinName in self.GPIO_PINS[0]:
             pinNum = self.GPIO_PINS[0][pinName]
 
             try:
                 with GPIO(pinNum, "out") as g:
-                    g.write(value)
+                    value = g.read()
             except Exception as e:
                 _logger.error("Failed to access pin " + str(pinName) + " with the following error:")
                 _logger.error(e)
@@ -67,5 +66,5 @@ class LED:
             _logger.error("Could not find pin " + str(pinName) + ". Aborting...")
             return -1
 
-        return 0
+        return value
 

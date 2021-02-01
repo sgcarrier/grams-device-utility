@@ -135,7 +135,25 @@
         "WIND_OSC_OE"               : 417,
         "SMA_OUT_0"                 : 418,
         "SMA_OUT_1"                 : 419,
-        "FMC_CLOCK_SYNTH_SYNC"      : 420,
+        "FMC_CLOCK_SYNTH_SYNC"      : 420
+      }]
+    },
+    "LED": {
+      "independent": false,
+      "GPIO_PINS": [{
+        "LED0"                      : 496,
+        "LED1"                      : 497,
+        "LED2"                      : 498,
+        "LED3"                      : 499,
+        "LED4"                      : 500,
+        "LED5"                      : 501,
+        "LED6"                      : 502,
+        "LED7"                      : 503
+      }]
+    },
+    "DIP": {
+      "independent": false,
+      "GPIO_PINS": [{
         "DIP0"                      : 504,
         "DIP1"                      : 505,
         "DIP2"                      : 506,

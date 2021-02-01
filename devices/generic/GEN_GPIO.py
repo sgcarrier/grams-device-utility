@@ -10,6 +10,7 @@ class GEN_GPIO:
     DEVICE_NAME = "GEN_GPIO"
     GPIO_PINS = {}
 
+    ADDRESS_INFO = []
 
 
 
@@ -35,6 +36,11 @@ class GEN_GPIO:
 
     def __getitem__(self, key):
         return self.__dict__[key]
+
+    def selftest(self, devNum):
+        # No selftests to be done, skipping
+        return 1
+
 
 
     def gpio_set(self, name, value):

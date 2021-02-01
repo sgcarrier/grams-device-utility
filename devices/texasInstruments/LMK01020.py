@@ -157,7 +157,7 @@ class LMK01020:
 
     def selftest(self, devNum):
         # lmk01020 is write-only, skip self-test
-        return 0
+        return 1
 
 
     def readout_all_registers(self, devNum):

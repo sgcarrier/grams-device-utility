@@ -121,7 +121,7 @@ class AD5668:
 
     def selftest(self, devNum):
         # ad5668 is write-only, skip self-test
-        return 0
+        return 1
 
     def swap_32bits(self, val):
         val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);

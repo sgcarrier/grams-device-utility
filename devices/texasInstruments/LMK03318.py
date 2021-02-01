@@ -335,7 +335,7 @@ class LMK03318:
     def selftest(self, devNum):
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
-        val = self.read_param(i2c_ch, i2c_addr, "VNDRID")
+        val = self.read_param(devNum, "VNDRID")
 
         if (val != 0x100B):
             _logger.error("Self-test for device " + str(self.DEVICE_NAME) + " on channel: " + str(i2c_ch) + " at address: " + str(i2c_addr) + " failed")
