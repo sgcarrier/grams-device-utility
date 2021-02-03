@@ -58,8 +58,9 @@ class LED:
             pinNum = self.GPIO_PINS[0][pinName]
 
             try:
-                with GPIO(pinNum, "out") as g:
-                    g.write(value)
+                g = GPIO(pinNum, "out")
+                g.write(value)
+                g.close()
             except Exception as e:
                 _logger.error("Failed to access pin " + str(pinName) + " with the following error:")
                 _logger.error(e)

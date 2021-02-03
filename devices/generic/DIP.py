@@ -57,8 +57,9 @@ class DIP:
             pinNum = self.GPIO_PINS[0][pinName]
 
             try:
-                with GPIO(pinNum, "out") as g:
-                    value = g.read()
+                g = GPIO(pinNum, "out")
+                value = g.read()
+                g.close()
             except Exception as e:
                 _logger.error("Failed to access pin " + str(pinName) + " with the following error:")
                 _logger.error(e)
