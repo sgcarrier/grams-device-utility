@@ -560,6 +560,7 @@ class LMK04610:
             _logger.error(
                 "Self-test for device " + str(self.DEVICE_NAME) + " on channel: " + str(i2c_ch) + " at address: " + str(
                     i2c_addr) + " failed")
+            _logger.error("Expecting: " + str(0x100B) + ", Received: " + str(val))
             return -1
         return 0
 
@@ -600,7 +601,7 @@ class Command():
                 _logger.warning("Incorrect number of arguments. Ignoring")
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
-            raise e
+            _logger.error(e)
 
 
     def from_dict(self, d, name=""):

@@ -196,7 +196,7 @@ class Command():
                 _logger.warning("Incorrect number of arguments. Ignoring")
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
-            raise e
+            _logger.error(e)
 
 
     def from_dict(self, d, name=""):

@@ -1,10 +1,21 @@
+import time
+import smbus
+import logging
+from periphery import GPIO
+from ctypes import *
 
+_logger = logging.getLogger(__name__)
 
-M_OFS = 480 #Matrix register offset
+class ICYSHSR1:
 
-REGISTERS_INFO = {
-    #  if min=max=0, read-only, min=max=1 Self-clearing)
-    # regs: max number of the register offset+1
+    DEVICE_NAME = "ICYSHSR1"
+    DEVICE_TYPE = "C_LIB"
+
+    M_OFS = 480 #Matrix register offset
+
+    REGISTERS_INFO = {
+        #  if min=max=0, read-only, min=max=1 Self-clearing)
+        # regs: max number of the register offset+1
                                  "ASIC_ID": {"addr":         0, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max":          0},
                        "OUTPUT_MUX_SELECT": {"addr":         1, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":          2},
                   "POST_PROCESSING_SELECT": {"addr":         1, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":       0xFF},
@@ -74,3 +85,203 @@ REGISTERS_INFO = {
            "TDC_LOCAL_CORRECTION_COARSE_1": {"addr": 476+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":  25, "min": 0, "max": 0xFFFFFFFF}
 
 }
+
+    ADDRESS_INFO = []
+    GPIO_PINS = {}
+
+    def __init__(self, DLLName="icyshsr1-lib.so", name="ICYSHSR1"):
+        self.__dict__ = {}
+        self._name = name
+        self.libc = CDLL(DLLName)
+        self.from_dict_plat()
+
+    def from_dict_plat(self):
+        for key, value in self.REGISTERS_INFO.items():
+            value = Command(value, str(key), self)
+            self.__dict__[key] = value
+
+    def register_device(self, devNum):
+        self.ADDRESS_INFO.append({'devNum': devNum})
+        _logger.debug("Added ICYSHSR1 device with devNum: " + str(devNum))
+
+    def device_summary(self):
+        report = ""
+        for addr in self.ADDRESS_INFO:
+            report += ('{DeviceName: <10} :: devNum:{devNum: >3}\n'.format(
+                DeviceName=self._name, Channel=addr['devNum']))
+        return report
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+
+    def read_param(self, devNum, paramName, register_offset=0):
+        if not (paramName in self.REGISTERS_INFO):
+            _logger.error(str(paramName) + " is an invalid parameter name")
+            return -1
+
+        paramInfo = self.REGISTERS_INFO[paramName]
+
+        if register_offset > paramInfo['regs'] - 1:
+            _logger.error("Offset too high, aborting...")
+            return -1
+
+        ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
+
+        retval = c_ulonglong(0)
+        retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(0))
+
+        return retval
+
+    def write_param(self, devNum, paramName, value, register_offset=0):
+        if not (paramName in self.REGISTERS_INFO):
+            _logger.error(str(paramName) + " is an invalid parameter name")
+            return -1
+
+        if paramName in self.REGISTERS_INFO:
+            paramInfo = self.REGISTERS_INFO[paramName]
+        elif paramName in self.GPIO_PINS[devNum]:
+            self.gpio_set(devNum=devNum, name=paramName, value=value)
+            return 0
+        else:
+            _logger.error("{paramName} is an unknown parameter or pin name.".format(paramName=paramName))
+            return -1
+
+        if not self.ADDRESS_INFO:
+            _logger.error("No Devices registered. Aborting...")
+            return -1
+
+        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
+        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
+
+        if (0 == paramInfo["min"]) and (0 == paramInfo["max"]):
+            _logger.error(str(paramName) + " is a read-only parameter")
+            return -1
+
+        if (value < paramInfo["min"]) or (value > paramInfo["max"]):
+            _logger.error(
+                "{value} is an invalid value for {paramName}. Must be between {min} and {max}".format(value=value,
+                                                                                                      paramName=paramName,
+                                                                                                      min=paramInfo[
+                                                                                                          "min"],
+                                                                                                      max=paramInfo[
+                                                                                                          "max"]))
+            return -1
+
+        paramInfo = self.REGISTERS_INFO[paramName]
+
+        if register_offset > paramInfo['regs'] - 1:
+            _logger.error("Offset too high, aborting...")
+            return -1
+
+
+        # Positions to appropriate bits
+        value <<= paramInfo["loc"]
+        # Restrain to concerned bits
+        value &= paramInfo["mask"]
+
+        value = self.register_exceptions(paramInfo, value)
+
+        #Convert to 64 bits here, just in case
+        value = c_ulonglong(value)
+        #Add register address
+        value += c_longlong(paramInfo['addr'] + register_offset) << 32
+
+        ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
+        self.libc.ic_write(c_ushort(ic_dev_num), c_ulonglong(value))
+
+        return 0
+
+    # Here are all the formatting exceptions for registers.
+    def register_exceptions(self, paramInfo, value):
+        return value
+
+    def selftest(self, devNum):
+
+        ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
+
+        # Selftest the AXI IP first
+        retVal = self.libc.axi_selftest(c_ushort(ic_dev_num))
+
+        if (retVal != 0xDEADBEEF):
+            _logger.error("Self-test of the AXI IP for the ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
+            _logger.error("Expecting: " + str(0xDEADBEEF) + ", Received: " + str(retVal))
+
+
+        # Selftest the ASIC itself now
+        register_address = self.REGISTERS_INFO['ASIC_ID']['addr']
+        retVal = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(register_address), c_ushort(0x0))
+
+        if (retVal != 0xF0E32001):
+            _logger.error("Self-test of the ASIC ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
+            _logger.error("Expecting: " + str(0xF0E32001) + ", Received: " + str(retVal))
+
+
+        return 0
+
+    def readout_all_registers(self, devNum):
+        ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
+
+        _logger.info("==== Device report ====")
+        _logger.info("Device Name: " + str(self.DEVICE_NAME))
+        _logger.info("DevNum: " + str(ic_dev_num))
+        for paramName in self.REGISTERS_INFO:
+            for reg in range(self.REGISTERS_INFO[paramName]['regs']):
+                val = self.read_param(ic_dev_num, paramName, register_offset=reg)
+                _logger.info('Param Name: {ParamName: <20}, Register Offset: {regOffset: <4}, Param Value: {Value: <16}'.format(ParamName=paramName, regOffset=reg, Value=val))
+
+    def gpio_set(self, devNum, name, value):
+        if not self.GPIO_PINS:
+            _logger.warning("No gpio pins defined. Aborting...")
+            return -1
+
+        if name in self.GPIO_PINS[devNum]:
+            pin = self.GPIO_PINS[devNum][name]
+            g = GPIO(pin, "out")
+            g.write(value)
+            g.close()
+        else:
+            _logger.error("Could not find pin named " + str(name) + ". Aborting...")
+            return -1
+
+        return 0
+
+
+class Command():
+    def __init__(self, d, name="", acc=None):
+        self.__dict__ = {}
+        self._name = name
+        self._acc = acc
+
+    def __call__(self, *args):
+        try:
+            if len(args) == 2:
+                self._acc.read_param(args[0], self._name, args[1])
+            elif len(args) == 3:
+                self._acc.write_param(args[0], self._name, args[1], args[2])
+            else:
+                _logger.warning("Incorrect number of arguments. Ignoring")
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+
+    def from_dict(self, d, name=""):
+        for key, value in d.items():
+            self.__dict__[key] = value
+
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+

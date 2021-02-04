@@ -201,6 +201,7 @@ class LMK61E2:
 
         if (val != 0x100B):
             _logger.error("Self-test for device on channel: " + str(i2c_ch) + " at address: " + str(i2c_addr) + " failed")
+            _logger.error("Expecting: " + str(0x100B) + ", Received: " + str(val))
             return -1
 
         return 0
@@ -213,7 +214,7 @@ class LMK61E2:
         _logger.info("Device Name: " + str(self.DEVICE_NAME))
         _logger.info("I2C channel: " + str(i2c_ch) + " I2C address: " + str(i2c_addr))
         for key in self.REGISTERS_INFO:
-            val = self.read_param(i2c_ch, i2c_addr, key)
+            val = self.read_param(devNum, key)
             _logger.info('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
     def gpio_set(self, devNum, name, value):
@@ -249,7 +250,7 @@ class Command():
                 _logger.warning("Incorrect number of arguments. Ignoring")
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
-            raise e
+            _logger.error(e)
 
 
     def from_dict(self, d, name=""):
