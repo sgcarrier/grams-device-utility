@@ -458,7 +458,7 @@ class LMK04610:
             _logger.debug("Instantiated LMK04610 device with path: " + str(path) + " and mode: " + str(mode))
         self.from_dict_plat()
 
-        self.LMK04610CurParams = [0] * 14
+        self.LMK04610CurParams = [0] * 0x153
 
         #self.LMK01020CurParams[9] = 0x22A00;
         #self.LMK01020CurParams[14] = 0x40000000;
@@ -490,9 +490,40 @@ class LMK04610:
 
 
     def read_param(self, devNum, paramName):
-        if not (paramName in self.REGISTERS_INFO):
-            _logger.error(str(paramName) + " is an invalid parameter name")
+
+        if paramName in self.REGISTERS_INFO:
+            paramInfo = self.REGISTERS_INFO[paramName]
+        else:
+            _logger.error("{paramName} is an unknown parameter or pin name.".format(paramName=paramName))
             return -1
+
+        if not self.ADDRESS_INFO:
+            _logger.error("No Devices registered. Aborting...")
+            return -1
+
+        spi_path = self.ADDRESS_INFO[devNum]["path"]
+        spi_mode = self.ADDRESS_INFO[devNum]["mode"]
+
+        totalResponse = 0
+        try:
+            with SPI(spi_path, spi_mode, 1000000) as spi:
+                # Dont forget to convert to big endian!
+                for r in range(paramInfo['regs']):
+                    valueToSend = (paramInfo['addr']+r)
+                    valueToSend += 1 << 15
+                    writeBuf = (valueToSend).to_bytes(2, 'big')
+                    _logger.debug("About to read raw data: " + str(writeBuf))
+                    response = spi.transfer(writeBuf)
+                    response = int.from_bytes(response, byteorder='big', signed=False)
+                    totalResponse += (response << (8 * r))
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
+
+        self.LMK04610CurParams[paramInfo['addr']] = totalResponse
+
+        return totalResponse
 
 
     def write_param(self, devNum, paramName, value):
@@ -536,12 +567,18 @@ class LMK04610:
         value = self.register_exceptions(paramInfo, value)
 
         self.LMK04610CurParams[paramInfo['addr']] = (~paramInfo['mask'] & self.LMK01020CurParams[paramInfo['addr']]) | value
+
+
+
         try:
             with SPI(spi_path, spi_mode, 1000000) as spi:
                 # Dont forget to convert to big endian!
-                writeBuf = (self.LMK04610CurParams[paramInfo['addr']]).to_bytes(4, 'big')
-                _logger.debug("About to write raw data: " + str(writeBuf))
-                spi.transfer(writeBuf)
+                for r in range(paramInfo['regs']):
+                    valueToSend = (paramInfo['addr']+r) << 8
+                    valueToSend += ((self.LMK04610CurParams[paramInfo['addr']] >> (r * 8)) & 0xFF)
+                    writeBuf = (valueToSend).to_bytes(3, 'big')
+                    _logger.debug("About to write raw data: " + str(writeBuf))
+                    spi.transfer(writeBuf)
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)
