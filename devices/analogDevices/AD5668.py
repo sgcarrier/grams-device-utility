@@ -105,11 +105,15 @@ class AD5668:
         value |= (dacNum << 20)
         value |= (paramInfo['addr'] << 24)
 
-
-        with SPI(spi_path, spi_mode, 1000000) as spi:
-            writeBuf = self.swap_32bits(value).to_bytes(4, 'big')
-            _logger.debug("About to write raw data: " + str(writeBuf))
-            spi.transfer(writeBuf)
+        try:
+            with SPI(spi_path, spi_mode, 1000000) as spi:
+                writeBuf = (self.swap_32bits(value)).to_bytes(4, 'big')
+                _logger.debug("About to write raw data: " + str(writeBuf))
+                spi.transfer(writeBuf)
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         return 0
 
@@ -140,14 +144,10 @@ class Command():
         self._acc = acc
 
     def __call__(self, *args):
-        try:
-            if len(args) == 3:
-                self._acc.write_param(args[0], self._name, args[1], args[2])
-            else:
-                _logger.warning("Incorrect number of arguments. Ignoring")
-        except Exception as e:
-            _logger.error("Could not set message to device. Check connection...")
-            raise e
+        if len(args) == 3:
+            self._acc.write_param(args[0], self._name, args[1], args[2])
+        else:
+            _logger.warning("Incorrect number of arguments. Ignoring")
 
 
     def from_dict(self, d, name=""):

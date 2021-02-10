@@ -536,12 +536,16 @@ class LMK04610:
         value = self.register_exceptions(paramInfo, value)
 
         self.LMK04610CurParams[paramInfo['addr']] = (~paramInfo['mask'] & self.LMK01020CurParams[paramInfo['addr']]) | value
-
-        with SPI(spi_path, spi_mode, 1000000) as spi:
-            # Dont forget to convert to big endian!
-            writeBuf = self.LMK04610CurParams[paramInfo['addr']].to_bytes(4, 'big')
-            _logger.debug("About to write raw data: " + str(writeBuf))
-            spi.transfer(writeBuf)
+        try:
+            with SPI(spi_path, spi_mode, 1000000) as spi:
+                # Dont forget to convert to big endian!
+                writeBuf = (self.LMK04610CurParams[paramInfo['addr']]).to_bytes(4, 'big')
+                _logger.debug("About to write raw data: " + str(writeBuf))
+                spi.transfer(writeBuf)
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         return 0
 
@@ -594,14 +598,10 @@ class Command():
         self._acc = acc
 
     def __call__(self, *args):
-        try:
-            if len(args) == 2:
-                self._acc.write_param(args[0], self._name, args[1])
-            else:
-                _logger.warning("Incorrect number of arguments. Ignoring")
-        except Exception as e:
-            _logger.error("Could not set message to device. Check connection...")
-            _logger.error(e)
+        if len(args) == 2:
+            self._acc.write_param(args[0], self._name, args[1])
+        else:
+            _logger.warning("Incorrect number of arguments. Ignoring")
 
 
     def from_dict(self, d, name=""):

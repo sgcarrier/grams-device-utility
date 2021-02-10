@@ -164,5 +164,23 @@
         "DIP7"                      : 511
       }]
     }
+  },
+  "grams": {
+    "ICYSHSR1":
+    {
+      "independent": false,
+      "ADDRESS_INFO": [
+        {
+          "devNum": 0
+        },
+        {
+          "devNum": 1
+        }],
+      "GPIO_PINS": [{
+        "SYNC"                      : 403,
+        "REINIT"                    : 404
+      }]
+    }
   }
+
 }
