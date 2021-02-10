@@ -314,7 +314,7 @@ class LMK03318:
             currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
             writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
             for i in range(paramInfo["regs"]-1):
-                writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> 8 * i))
+                writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> (8 * i)))
 
             _logger.debug("About to write raw data: " + str(writeBuf))
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)

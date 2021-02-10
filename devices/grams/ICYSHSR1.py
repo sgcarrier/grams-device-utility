@@ -157,9 +157,6 @@ class ICYSHSR1:
             _logger.error("No Devices registered. Aborting...")
             return -1
 
-        i2c_addr = self.ADDRESS_INFO[devNum]['addr']
-        i2c_ch = self.ADDRESS_INFO[devNum]['ch']
-
         if (0 == paramInfo["min"]) and (0 == paramInfo["max"]):
             _logger.error(str(paramName) + " is a read-only parameter")
             return -1
