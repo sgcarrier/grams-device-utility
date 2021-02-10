@@ -85,6 +85,10 @@ class TCA9539:
             _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(
                 i2c_addr) + ". Check your connection....")
             return -1
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
@@ -151,6 +155,10 @@ class TCA9539:
             _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(
                 i2c_addr) + ". Check your connection....")
             return -1
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         return 0
 
@@ -204,16 +212,13 @@ class Command():
         self._acc = acc
 
     def __call__(self, *args):
-        try:
-            if len(args) == 2:
-                self._acc.write_param(args[0], self._name, args[1])
-            elif len(args) == 1:
-                return self._acc.read_param(args[0], self._name)
-            else:
-                _logger.warning("Incorrect number of arguments. Ignoring")
-        except Exception as e:
-            _logger.error("Could not set message to device. Check connection...")
-            _logger.error(e)
+        if len(args) == 2:
+            self._acc.write_param(args[0], self._name, args[1])
+        elif len(args) == 1:
+            return self._acc.read_param(args[0], self._name)
+        else:
+            _logger.warning("Incorrect number of arguments. Ignoring")
+
 
     def from_dict(self, d, name=""):
         for key, value in d.items():

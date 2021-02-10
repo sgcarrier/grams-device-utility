@@ -36,7 +36,7 @@ class LMK61E2:
              "PLL_LF_R2":  { "addr":  36, "loc":   0, "mask":     0xFF, "regs":   1, "min":   1, "max":     255}, # LMK61E2_PLL_LF_R2
              "PLL_LF_C1":  { "addr":  37, "loc":   0, "mask":      0x7, "regs":   1, "min":   0, "max":       7}, # LMK61E2_PLL_LF_C1   # true value of C1 = 5 + 50*PLL_LF_C1
              "PLL_LF_R3":  { "addr":  38, "loc":   0, "mask":     0x7F, "regs":   1, "min":   0, "max":     127}, # LMK61E2_PLL_LF_R3
-            "PLL_LF_C3 ":  { "addr":  39, "loc":   0, "mask":      0x7, "regs":   1, "min":   0, "max":       7}, # LMK61E2_PLL_LF_C3   # true value of C1 = 5 + 50*PLL_LF_C1
+             "PLL_LF_C3":  { "addr":  39, "loc":   0, "mask":      0x7, "regs":   1, "min":   0, "max":       7}, # LMK61E2_PLL_LF_C3   # true value of C1 = 5 + 50*PLL_LF_C1
           "PLL_CLSDWAIT":  { "addr":  42, "loc":   2, "mask":      0xC, "regs":   1, "min":   0, "max":       3}, # LMK61E2_PLL_CLSDWAIT
            "PLL_VCOWAIT":  { "addr":  42, "loc":   0, "mask":      0x3, "regs":   1, "min":   0, "max":       3}, # LMK61E2_PLL_VCOWAIT
                "NVMSCRC":  { "addr":  47, "loc":   0, "mask":     0xFF, "regs":   1, "min":   0, "max":       0}, # LMK61E2_NVMSCRC
@@ -112,6 +112,10 @@ class LMK61E2:
             _logger.error(e)
             _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ".Check your connection....")
             return -1
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
@@ -177,6 +181,10 @@ class LMK61E2:
             _logger.error(e)
             _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ".Check your connection....")
             return -1
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         return 0
 
@@ -241,16 +249,12 @@ class Command():
         self._acc = acc
 
     def __call__(self, *args):
-        try:
-            if len(args) == 2:
-                self._acc.write_param(args[0], self._name, args[1])
-            elif len(args) == 1:
-                return self._acc.read_param(args[0], self._name)
-            else:
-                _logger.warning("Incorrect number of arguments. Ignoring")
-        except Exception as e:
-            _logger.error("Could not set message to device. Check connection...")
-            _logger.error(e)
+        if len(args) == 2:
+            self._acc.write_param(args[0], self._name, args[1])
+        elif len(args) == 1:
+            return self._acc.read_param(args[0], self._name)
+        else:
+            _logger.warning("Incorrect number of arguments. Ignoring")
 
 
     def from_dict(self, d, name=""):

@@ -258,6 +258,10 @@ class LMK03318:
             _logger.error(e)
             _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ". Check your connection....")
             return -1
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
@@ -323,6 +327,10 @@ class LMK03318:
             _logger.error(e)
             _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ". Check your connection....")
             return -1
+        except Exception as e:
+            _logger.error("Could not set message to device. Check connection...")
+            _logger.error(e)
+            return -1
 
         return 0
 
@@ -369,6 +377,44 @@ class LMK03318:
 
         return 0
 
+    def set_frequency(self, freq):
+
+        """
+                F_VCO = (F_REF / R) × D × [(INT + NUM / DEN) / M]
+                F_OUT = F_VCO / (P × OUTDIV)
+         """
+        FVCO = 5000000000
+        self.PLL_P(0, 7)
+        self.CH_0_MUTE(0, 0)
+        self.CH_3_MUTE(0, 0)
+        self.INSEL_PLL(0, 2)
+        self.OUT_3_MODE1(0, 0)
+        self.OUT_3_SEL(0, 1)
+
+        ## Config de base pour le output
+        self.PRIBUFSEL(0, 1)
+        self.AC_MODE_PRI(0, 0)
+        self.DIFFTERM_PRI(0, 1)
+        self.TERM2GND_PRI(0, 0)
+        self.SECBUFSEL(0, 3)
+
+        self.OUT_0_SEL(0, 1)
+        self.OUT_0_MODE1(0, 0)
+        self.OUT_3_SEL(0, 1)
+        self.OUT_3_MODE1(0, 0)
+        self.PLL_NDIV(0, 40)
+        self.PLLRDIV(0, 0)
+        self.PLLMDIV(0, 1)
+        self.OUT_0_1_DIV(0, 100)
+        self.OUT_2_3_DIV(0, 100)
+        self.PRI_D(0, 0)
+        self.PLL_P(0, 7)
+
+        self.PLL_PDN(0, 1)
+        self.PLL_PDN(0, 0)
+
+        self.SYNC_CNTRL(0, 0)
+        self.SYNC_CNTRL(0, 1)
 
 
 class Command():
@@ -378,16 +424,12 @@ class Command():
         self._acc = acc
 
     def __call__(self, *args):
-        try:
-            if len(args) == 2:
-                self._acc.write_param(args[0], self._name, args[1])
-            elif len(args) == 1:
-                return self._acc.read_param(args[0], self._name)
-            else:
-                _logger.warning("Incorrect number of arguments. Ignoring")
-        except Exception as e:
-            _logger.error("Could not set message to device. Check connection...")
-            _logger.error(e)
+        if len(args) == 2:
+            self._acc.write_param(args[0], self._name, args[1])
+        elif len(args) == 1:
+            return self._acc.read_param(args[0], self._name)
+        else:
+            _logger.warning("Incorrect number of arguments. Ignoring")
 
 
     def from_dict(self, d, name=""):

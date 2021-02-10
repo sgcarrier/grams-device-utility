@@ -92,7 +92,11 @@ class ICYSHSR1:
     def __init__(self, DLLName="icyshsr1-lib.so", name="ICYSHSR1"):
         self.__dict__ = {}
         self._name = name
-        self.libc = CDLL(DLLName)
+        try:
+            self.libc = CDLL(DLLName)
+        except Exception as e:
+            self.libc = None
+            _logger.error("Could not find DLL " + str(DLLName) + ". Thus, could not properly create device.")
         self.from_dict_plat()
 
     def from_dict_plat(self):
@@ -108,7 +112,7 @@ class ICYSHSR1:
         report = ""
         for addr in self.ADDRESS_INFO:
             report += ('{DeviceName: <10} :: devNum:{devNum: >3}\n'.format(
-                DeviceName=self._name, Channel=addr['devNum']))
+                DeviceName=self._name, devNum=addr['devNum']))
         return report
 
     def __repr__(self):
@@ -203,6 +207,10 @@ class ICYSHSR1:
         return value
 
     def selftest(self, devNum):
+
+        if self.libc == None:
+            _logger.warning("No LIBC registered for ICYSHSR1, skipping")
+            return -1
 
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
 
