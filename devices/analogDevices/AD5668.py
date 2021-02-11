@@ -11,15 +11,15 @@ class AD5668:
     #All register info concerning all LMK parameters
     REGISTERS_INFO = {
         #  if min=max=0, read-only, min=max=1 Self-clearing)
-    "WRITE_TO_INPUT_REGISTER"           : { "addr":  0, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  # WRITE_TO_INPUT_REGISTER,
-    "UPDATE_DAC_REGISTER"               : { "addr":  1, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #UPDATE_DAC_REGISTER,
-    "WRITE_TO_INPUT_REGISTER_UPDATE_ALL": { "addr":  2, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #WRITE_TO_INPUT_REGISTER_UPDATE_ALL,
-    "WRITE_TO_AND_UPDATE_DAC"           : { "addr":  3, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #WRITE_TO_AND_UPDATE_DAC,
-    "DAC_ON_OFF"                        : { "addr":  4, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #DAC_ON_OFF,
-    "LOAD_CLEAR_CODE_REGISTER"          : { "addr":  5, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #LOAD_CLEAR_CODE_REGISTER,
-    "LOAD_LDAC_REGISTER"                : { "addr":  6, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #LOAD_LDAC_REGISTER,
-    "RESET"                             : { "addr":  7, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #RESET,
-    "INTERNAL_REF_SETUP"                : { "addr":  8, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF}   #INTERNAL_REF_SETUP
+    "WRITE_TO_INPUT_REGISTER"           : { "addr":  0, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  # WRITE_TO_INPUT_REGISTER,
+    "UPDATE_DAC_REGISTER"               : { "addr":  1, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #UPDATE_DAC_REGISTER,
+    "WRITE_TO_INPUT_REGISTER_UPDATE_ALL": { "addr":  2, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #WRITE_TO_INPUT_REGISTER_UPDATE_ALL,
+    "WRITE_TO_AND_UPDATE_DAC"           : { "addr":  3, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #WRITE_TO_AND_UPDATE_DAC,
+    "DAC_ON_OFF"                        : { "addr":  4, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #DAC_ON_OFF,
+    "LOAD_CLEAR_CODE_REGISTER"          : { "addr":  5, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #LOAD_CLEAR_CODE_REGISTER,
+    "LOAD_LDAC_REGISTER"                : { "addr":  6, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #LOAD_LDAC_REGISTER,
+    "RESET"                             : { "addr":  7, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  #RESET,
+    "INTERNAL_REF_SETUP"                : { "addr":  8, "loc": 0, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF}   #INTERNAL_REF_SETUP
     }
 
     ADDRESS_INFO = []
@@ -107,7 +107,7 @@ class AD5668:
 
         try:
             with SPI(spi_path, spi_mode, 1000000) as spi:
-                writeBuf = (self.swap_32bits(value)).to_bytes(4, 'big')
+                writeBuf = (value).to_bytes(4, 'big')
                 _logger.debug("About to write raw data: " + str(writeBuf))
                 spi.transfer(writeBuf)
         except Exception as e:
@@ -128,8 +128,8 @@ class AD5668:
         return 1
 
     def swap_32bits(self, val):
-        val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
-        return (val << 16) | (val >> 16);
+        val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF)
+        return (val << 16) | (val >> 16)
 
 
     def readout_all_registers(self, devNum):
