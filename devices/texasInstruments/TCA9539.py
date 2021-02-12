@@ -169,12 +169,12 @@ class TCA9539:
     def selftest(self, devNum):
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
-        val = self.read_param(devNum, "VNDRID")
+        val = self.read_param(devNum, "INPUTPORT0")
 
-        if (val != 0x100B):
+        if (val != 0x0000):
             _logger.error("Self-test for device on channel: " + str(i2c_ch) + " at address: " + str(
                 i2c_addr) + " failed")
-            _logger.error("Expecting: " + str(0x100B) + ", Received: " + str(val))
+            _logger.error("Expecting: " + str(0x0000) + ", Received: " + str(val))
             return -1
 
         return 0

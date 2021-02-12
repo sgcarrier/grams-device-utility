@@ -593,17 +593,7 @@ class LMK04610:
 
 
     def selftest(self, devNum):
-        i2c_addr = self.ADDRESS_INFO[devNum]['path']
-        i2c_ch = self.ADDRESS_INFO[devNum]['mode']
-        val = self.read_param(devNum, "VNDRID")
-
-        if (val != 0x100B):
-            _logger.error(
-                "Self-test for device " + str(self.DEVICE_NAME) + " on channel: " + str(i2c_ch) + " at address: " + str(
-                    i2c_addr) + " failed")
-            _logger.error("Expecting: " + str(0x100B) + ", Received: " + str(val))
-            return -1
-        return 0
+        return 1
 
 
     def readout_all_registers(self, devNum):

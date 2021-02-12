@@ -59,6 +59,9 @@ class CHARTIER():
                         self.__dict__[devName].ADDRESS_INFO = attr["ADDRESS_INFO"]
                     if "GPIO_PINS" in attr:
                         self.__dict__[devName].GPIO_PINS = attr["GPIO_PINS"]
+                    if hasattr(self.__dict__[devName], 'setup'):
+                        self.__dict__[devName].setup()
+                    
                 else:
                     num = 0
                     if "ADDRESS_INFO" in attr:
@@ -73,6 +76,7 @@ class CHARTIER():
                         for gpio_pins in attr["GPIO_PINS"]:
                             self.__dict__[devName+"_"+str(num)].GPIO_PINS = gpio_pins
                             num += 1
+
 
     def __repr__(self):
         return self._name

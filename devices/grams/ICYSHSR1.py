@@ -139,7 +139,12 @@ class ICYSHSR1:
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
 
         retval = c_ulonglong(0)
-        retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(0))
+        try:
+            retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(0))
+        except Exception as e:
+            _logger.error("could not read from IC:")
+            _logger.error(e)
+            return -1
 
         return retval
 
@@ -212,7 +217,12 @@ class ICYSHSR1:
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
 
         # Selftest the AXI IP first
-        retVal = self.libc.axi_selftest(c_ushort(ic_dev_num))
+        try:
+            retVal = self.libc.axi_selftest(c_ushort(ic_dev_num))
+        except Exception as e:
+            _logger.error("Could not open axi device")
+            _logger.error(e)
+            return -1
 
         if (retVal != 0xDEADBEEF):
             _logger.error("Self-test of the AXI IP for the ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")

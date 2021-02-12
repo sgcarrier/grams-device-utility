@@ -207,6 +207,12 @@ class LMK03318:
             _logger.debug("Instantiated LMK03318 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
         self.from_dict_plat()
 
+    def setup(self):
+        #Must toggle PDN before sending data or else the I2C line will lock up...
+        for i in range(len(self.GPIO_PINS)):
+            self.gpio_set(i, "PDN", False)
+            self.gpio_set(i, "PDN", True) 
+
     def from_dict_plat(self):
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
@@ -274,6 +280,19 @@ class LMK03318:
 
         return val
 
+    def TO_FUCKING_LIST_CALISS(self, data, length=None):
+        retList = []
+        if length != None:
+            for i in range(length):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        else:
+            while(data != 0):
+                retList.append(data & 0xFF)
+                data = data >> 8
+
+        return retList[::-1]
+
     def write_param(self, devNum, paramName, value):
         if not (paramName in self.REGISTERS_INFO):
             _logger.error(str(paramName) + " is an invalid parameter name")
@@ -316,9 +335,20 @@ class LMK03318:
         try:
             bus = smbus.SMBus(i2c_ch)
             currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
-            writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
-            for i in range(paramInfo["regs"]-1):
-                writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> (8 * i)))
+            _logger.debug("Current value in register " + str(paramName)  + " : " + str(currVal))
+            currVal = int.from_bytes(currVal, byteorder='big')
+            currVal = currVal & (~paramInfo["mask"])
+            value += currVal
+            
+            writeBuf = self.TO_FUCKING_LIST_CALISS(value, length=paramInfo["regs"])
+ 
+            #if paramInfo["regs"] == 1:
+            #    writeBuf = [value]
+            #else:
+            #    writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
+
+            #for i in range(paramInfo["regs"]-1):
+            #    writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> (8 * i)))
 
             _logger.debug("About to write raw data: " + str(writeBuf))
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)

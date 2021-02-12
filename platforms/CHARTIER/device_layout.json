@@ -3,12 +3,12 @@
     "AD5668": {
       "ADDRESS_INFO": [
         {
-          "path": "/dev/spidev2.0",
-          "mode": 0
+          "path": "/dev/spidev3.0",
+          "mode": 1
         },
         {
-          "path": "/dev/spidev2.1",
-          "mode": 0
+          "path": "/dev/spidev3.1",
+          "mode": 1
         }
       ],
       "independent": false
@@ -18,27 +18,27 @@
     "LMK61E2": {
       "ADDRESS_INFO": [
         {
-          "ch": 0,
+          "ch": 10,
           "addr": 88
         },
         {
-          "ch": 0,
+          "ch": 10,
           "addr": 89
         },
         {
-          "ch": 1,
+          "ch": 11,
           "addr": 88
         },
         {
-          "ch": 1,
+          "ch": 11,
           "addr": 89
         },
         {
-          "ch": 0,
+          "ch": 10,
           "addr": 90
         },
         {
-          "ch": 1,
+          "ch": 11,
           "addr": 90
         }
       ],
@@ -52,7 +52,7 @@
     "LMK03318": {
       "ADDRESS_INFO": [
         {
-          "ch": 1,
+          "ch": 11,
           "addr": 80
         }
       ],
@@ -67,7 +67,7 @@
     "LMK04610": {
       "ADDRESS_INFO": [
         {
-          "path": "/dev/spidev1.0",
+          "path": "/dev/spidev2.0",
           "mode": 0
         }
       ],
@@ -82,7 +82,7 @@
     "TCA9539": {
       "ADDRESS_INFO": [
         {
-          "ch": 0,
+          "ch": 10,
           "addr": 119
         }
       ],
