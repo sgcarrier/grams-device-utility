@@ -6,10 +6,13 @@ from periphery import GPIO
 _logger = logging.getLogger(__name__)
 
 class LMK61E2:
-
+    """
+        Class for the LMK61E2, a Ultra-low jitter programmable Oscillator
+        The LMK61E2 is a read-write device that communicates via I2C
+    """
     DEVICE_NAME = "LMK61E2"
 
-    #All register info concerning all LMK parameters
+    ''' All register info concerning all LMK61E2 parameters '''
     REGISTERS_INFO = {
     #  if min=max=0, read-only, min=max=1 Self-clearing)
                 "VNDRID":  { "addr":   0, "loc":   0, "mask":   0xFFFF, "regs":   2, "min":   0, "max":       0}, # LMK61E2_VNDRID
@@ -66,9 +69,8 @@ class LMK61E2:
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
             _logger.debug("Instantiated LMK61E2 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
-        self.from_dict_plat()
 
-    def from_dict_plat(self):
+        ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
             self.__dict__[key] = value
@@ -83,17 +85,6 @@ class LMK61E2:
             report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=self._name, Channel=addr['ch'], Address=addr['addr']))
         return report
 
-    def __repr__(self):
-        return self._name
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-
-    # Read temperature registers and calculate Celsius
     def read_param(self, devNum, paramName):
         if not (paramName in self.REGISTERS_INFO):
             _logger.error(str(paramName) + " is an invalid parameter name")
@@ -119,11 +110,9 @@ class LMK61E2:
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
-        # Restrain to concerned bits
+        ''' Data formating from the register '''
         val &= paramInfo['mask']
-        # Positions to appropriate bits
         val >>= paramInfo['loc']
-
         val = self.register_exceptions(paramInfo, val)
 
         return val
@@ -135,13 +124,9 @@ class LMK61E2:
 
         if paramName in self.REGISTERS_INFO:
             paramInfo = self.REGISTERS_INFO[paramName]
-        elif paramName in self.GPIO_PINS[devNum]:
-            self.gpio_set(devNum=devNum, name=paramName, value=value)
-            return 0
         else:
             _logger.error("{paramName} is an unknown parameter or pin name.".format(paramName=paramName))
             return -1
-
 
         if not self.ADDRESS_INFO:
             _logger.error("No Devices registered. Aborting...")
@@ -160,21 +145,27 @@ class LMK61E2:
                                                                                                                 max=paramInfo["max"]))
             return -1
 
-        # Positions to appropriate bits
+        ''' Data formating to put into the register '''
         value <<= paramInfo["loc"]
-        # Restrain to concerned bits
         value &= paramInfo["mask"]
-
         value = self.register_exceptions(paramInfo, value)
 
         try:
             bus = smbus.SMBus(i2c_ch)
-            currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
-            writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
-            for i in range(paramInfo["regs"]-1):
-                writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> (8 * i)))
 
-            _logger.debug("About to write raw data: " + str(writeBuf))
+            ''' Retrieve value in register '''
+            currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+            _logger.debug("In register " + str(paramName) + " = " + str([hex(no) for no in currVal]))
+            currVal = int.from_bytes(currVal, byteorder='big')
+            ''' Clear all bits concerned with our parameter and keep the others we dont want to affect
+                Note this might cause problems if your python is not 64-bits and registers are >32bits '''
+            currVal_cleared = currVal & (~paramInfo["mask"])
+            ''' Write new value for the parameter '''
+            newVal = value + currVal_cleared
+            ''' Package as a byte-list '''
+            writeBuf = self.int_to_short_list(newVal, fixed_length=paramInfo["regs"])
+
+            _logger.debug("To register " + str(paramName) + " = " + str([hex(no) for no in writeBuf]))
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
             bus.close()
         except FileNotFoundError as e:
@@ -188,9 +179,29 @@ class LMK61E2:
 
         return 0
 
+    """
+    Converts an integer to a list of byte-size shorts.
+    Ex:    idx          0     1     2
+        0x123456 --> [0x12, 0x34, 0x56] (invert=False) (BIG_ENDIAN)
+        0x123456 --> [0x56, 0x34, 0x12] (invert=True)  (LITTLE ENDIAN)
+    """
+    def int_to_short_list(self, data, fixed_length=None, invert=False):
+        retList = []
+        if fixed_length:
+            for i in range(fixed_length):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        else:
+            while(data != 0):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        if invert:
+            return retList
+        else:
+            return retList[::-1]
 
-    # Here are all the formatting exceptions for registers.
-    # Example: XO_CAPCTRL orders its bits in reverse register order compared to others
+    """ Here are all the formatting exceptions for registers.
+        Example: XO_CAPCTRL orders its bits in reverse register order compared to others """
     def register_exceptions(self, paramInfo, value):
         if paramInfo['addr'] == 16:
             _logger.debug("Applying exception register format to register XO_CAPCTRL")
@@ -202,7 +213,6 @@ class LMK61E2:
 
 
     def selftest(self, devNum):
-
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
         val = self.read_param(devNum, "VNDRID")
@@ -241,7 +251,19 @@ class LMK61E2:
 
         return 0
 
+    def __repr__(self):
+        return self._name
 
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+"""
+This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
+a read or write operation, depending on what is available
+"""
 class Command():
     def __init__(self, d, name="", acc=None):
         self.__dict__ = {}
@@ -255,11 +277,6 @@ class Command():
             return self._acc.read_param(args[0], self._name)
         else:
             _logger.warning("Incorrect number of arguments. Ignoring")
-
-
-    def from_dict(self, d, name=""):
-        for key, value in d.items():
-            self.__dict__[key] = value
 
     def __repr__(self):
         return self._name

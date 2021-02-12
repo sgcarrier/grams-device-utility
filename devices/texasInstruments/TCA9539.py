@@ -6,6 +6,12 @@ from periphery import GPIO
 _logger = logging.getLogger(__name__)
 
 class TCA9539:
+    """
+        Class for the TCA9539, a 16-Bit I2C and SMBus I/O Expander
+        The TCA9539 is a write-read device that communicates via I2C.
+
+        User Notes:
+    """
 
     DEVICE_NAME = "TCA9539"
 
@@ -31,12 +37,12 @@ class TCA9539:
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
             _logger.debug("Instantiated TCA9539 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
-        self.from_dict_plat()
 
-    def from_dict_plat(self):
+        ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
             self.__dict__[key] = value
+
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
@@ -48,14 +54,7 @@ class TCA9539:
             report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=self._name, Channel=addr['ch'], Address=addr['addr']))
         return report
 
-    def __repr__(self):
-        return self._name
 
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
 
     # Read temperature registers and calculate Celsius
     def read_param(self, devNum, paramName):
@@ -92,11 +91,9 @@ class TCA9539:
 
         val = int.from_bytes(retVal, byteorder='big', signed=False)
 
-        # Restrain to concerned bits
+        ''' Data formating from the register '''
         val &= paramInfo['mask']
-        # Positions to appropriate bits
         val >>= paramInfo['loc']
-
         val = self.register_exceptions(paramInfo, val)
 
         return val
@@ -134,20 +131,27 @@ class TCA9539:
                                                                    max=paramInfo["max"]))
             return -1
 
-        # Positions to appropriate bits
+        ''' Data formating to put into the register '''
         value <<= paramInfo["loc"]
-        # Restrain to concerned bits
         value &= paramInfo["mask"]
-
         value = self.register_exceptions(paramInfo, value)
+
         try:
             bus = smbus.SMBus(i2c_ch)
-            currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
-            writeBuf = (value).to_bytes(paramInfo["regs"], 'big')
-            for i in range(paramInfo["regs"]-1):
-                writeBuf[i] |= (currVal[i] & (~paramInfo["mask"] >> (8 * i)))
 
-            _logger.debug("About to write raw data: " + str(writeBuf))
+            ''' Retrieve value in register '''
+            currVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
+            _logger.debug("In register " + str(paramName) + " = " + str([hex(no) for no in currVal]))
+            currVal = int.from_bytes(currVal, byteorder='big')
+            ''' Clear all bits concerned with our parameter and keep the others we dont want to affect
+                Note this might cause problems if your python is not 64-bits and registers are >32bits '''
+            currVal_cleared = currVal & (~paramInfo["mask"])
+            ''' Write new value for the parameter '''
+            newVal = value + currVal_cleared
+            ''' Package as a byte-list '''
+            writeBuf = self.int_to_short_list(newVal, fixed_length=paramInfo["regs"])
+
+            _logger.debug("To register " + str(paramName) + " = " + str([hex(no) for no in writeBuf]))
             bus.write_i2c_block_data(i2c_addr, paramInfo["addr"], writeBuf)
             bus.close()
         except FileNotFoundError as e:
@@ -162,7 +166,29 @@ class TCA9539:
 
         return 0
 
-    # Here are all the formatting exceptions for registers.
+    """
+    Converts an integer to a list of byte-size shorts.
+    Ex:    idx          0     1     2
+        0x123456 --> [0x12, 0x34, 0x56] (invert=False) (BIG_ENDIAN)
+        0x123456 --> [0x56, 0x34, 0x12] (invert=True)  (LITTLE ENDIAN)
+    """
+
+    def int_to_short_list(self, data, fixed_length=None, invert=False):
+        retList = []
+        if fixed_length:
+            for i in range(fixed_length):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        else:
+            while (data != 0):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        if invert:
+            return retList
+        else:
+            return retList[::-1]
+
+    ''' Here are all the formatting exceptions for registers. '''
     def register_exceptions(self, paramInfo, value):
         return value
 
@@ -205,6 +231,19 @@ class TCA9539:
 
         return 0
 
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+"""
+This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
+a read or write operation, depending on what is available
+"""
 class Command():
     def __init__(self, d, name="", acc=None):
         self.__dict__ = {}
@@ -218,11 +257,6 @@ class Command():
             return self._acc.read_param(args[0], self._name)
         else:
             _logger.warning("Incorrect number of arguments. Ignoring")
-
-
-    def from_dict(self, d, name=""):
-        for key, value in d.items():
-            self.__dict__[key] = value
 
     def __repr__(self):
         return self._name
