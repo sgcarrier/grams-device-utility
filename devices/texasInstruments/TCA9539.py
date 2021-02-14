@@ -6,6 +6,10 @@ from periphery import GPIO
 _logger = logging.getLogger(__name__)
 
 class TCA9539:
+    """
+    Notes: - pus CONFIGURATIONPORT0/1 to 0x0
+
+    """
 
     DEVICE_NAME = "TCA9539"
 
