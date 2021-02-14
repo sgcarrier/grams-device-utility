@@ -5,10 +5,19 @@ from periphery import SPI, GPIO
 _logger = logging.getLogger(__name__)
 
 class LMK01020:
+    """
+        Class for the LMK01020, a High Performance Clock Buffer, Divider, and Distributor
+        The LMK01020 is a write-only device that communicates via SPI (uwire)
 
+        User Notes:
+        - The default used clock is CLK1, change it with CLKIN_SELECT
+        - The Clock division is actually 2x what you put in CLKoutX_DIV
+        - Toggle SYNC pin at least once (low-High)
+        - Don't forget the GOE pin for output
+    """
     DEVICE_NAME = "LMK01020"
 
-    #All register info concerning all LMK parameters
+    ''' All register info concerning all LMK01020 parameters '''
     REGISTERS_INFO = {
         #  if min=max=0, read-only, min=max=1 Self-clearing)
                    "RESET": { "addr":  0, "loc": 31, "mask": 0x80000000, "min": 0, "max":   1},  # RESET,
@@ -68,17 +77,16 @@ class LMK01020:
         if path and mode:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
             _logger.debug("Instantiated LMK01020 device with path: " + str(path) + " and mode: " + str(mode))
-        self.from_dict_plat()
 
-        self.LMK01020CurParams = [0] * 15
-
-        self.LMK01020CurParams[9] = 0x22A00
-        self.LMK01020CurParams[14] = 0x40000000
-
-    def from_dict_plat(self):
+        ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
             self.__dict__[key] = value
+
+        ''' Since the LMK01020 is write-only, we keep a local copy of registers '''
+        self.LMK01020CurParams = [0] * 15
+        self.LMK01020CurParams[9] = 0x22A00
+        self.LMK01020CurParams[14] = 0x40000000
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})
@@ -89,16 +97,6 @@ class LMK01020:
         for addr in self.ADDRESS_INFO:
             report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=self._name, Path=addr['path'], Mode=addr['mode']))
         return report
-
-    def __repr__(self):
-        return self._name
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
 
     def write_param(self, devNum, paramName, value):
         if not (paramName in self.REGISTERS_INFO):
@@ -133,9 +131,8 @@ class LMK01020:
                                                                    max=paramInfo["max"]))
             return -1
 
-        # Positions to appropriate bits
+        ''' Data formating to put into the register '''
         value <<= paramInfo["loc"]
-        # Restrain to concerned bits
         value &= paramInfo["mask"]
 
         value = self.register_exceptions(paramInfo, value)
@@ -143,8 +140,9 @@ class LMK01020:
         self.LMK01020CurParams[paramInfo['addr']] = (~paramInfo['mask'] & self.LMK01020CurParams[paramInfo['addr']]) | value
         try:
             with SPI(spi_path, spi_mode, 1000000) as spi:
-                writeBuf = self.LMK01020CurParams[paramInfo['addr']].to_bytes(4, 'big')
-                _logger.debug("About to write raw data: " + str(writeBuf))
+                to_send =self.LMK01020CurParams[paramInfo['addr']] + paramInfo['addr']
+                writeBuf = self.int_to_short_list(to_send, fixed_length=4)
+                _logger.debug("Writing raw data: " + str([hex(no) for no in writeBuf]))
                 spi.transfer(writeBuf)
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
@@ -153,6 +151,26 @@ class LMK01020:
 
         return 0
 
+    """
+    Converts an integer to a list of byte-size shorts.
+    Ex:    idx          0     1     2
+        0x123456 --> [0x12, 0x34, 0x56] (invert=False) (BIG_ENDIAN)
+        0x123456 --> [0x56, 0x34, 0x12] (invert=True)  (LITTLE ENDIAN)
+    """
+    def int_to_short_list(self, data, fixed_length=None, invert=False):
+        retList = []
+        if fixed_length:
+            for i in range(fixed_length):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        else:
+            while(data != 0):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        if invert:
+            return retList
+        else:
+            return retList[::-1]
 
     # Here are all the formatting exceptions for registers.
     def register_exceptions(self, paramInfo, value):
@@ -185,7 +203,19 @@ class LMK01020:
 
         return 0
 
+    def __repr__(self):
+        return self._name
 
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+"""
+This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
+a read or write operation, depending on what is available
+"""
 class Command():
     def __init__(self, d, name="", acc=None):
         self.__dict__ = {}

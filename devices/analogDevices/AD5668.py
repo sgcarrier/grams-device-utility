@@ -5,10 +5,21 @@ from periphery import SPI, GPIO
 _logger = logging.getLogger(__name__)
 
 class AD5668:
+    """
+        Class for the AD5668, a 16-bit DAC with 8 outputs.
+        The AD5568 is a write-only device and communicates via SPI
+
+        User Notes:
+        - Input BIG endian data into the SPI line
+        - The AD5668 reads data on the FALLING edge of the clocks (SPI MODE 1)
+        - All transactions MUST have 32 clock cycles (4 bytes) or else it will be ignored.
+        - For quick setup: 'INTERNAL_REF_SETUP = 1' followed by 'WRITE_TO_AND_UPDATE_DAC = Value' you want
+
+    """
 
     DEVICE_NAME = "AD5668"
 
-    #All register info concerning all LMK parameters
+    #All register info concerning all AD5668 parameters
     REGISTERS_INFO = {
         #  if min=max=0, read-only, min=max=1 Self-clearing)
     "WRITE_TO_INPUT_REGISTER"           : { "addr":  0, "loc": 4, "mask": 0xFFFFFFFF, "min": 0, "max": 0xFFFF},  # WRITE_TO_INPUT_REGISTER,
@@ -31,9 +42,8 @@ class AD5668:
 
         if path and mode:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
-        self.from_dict_plat()
 
-    def from_dict_plat(self):
+        ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
             self.__dict__[key] = value
@@ -46,17 +56,6 @@ class AD5668:
         for addr in self.ADDRESS_INFO:
             report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=self._name, Path=addr['path'], Mode=addr['mode']))
         return report
-
-
-
-    def __repr__(self):
-        return self._name
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
 
     def write_param(self, devNum, paramName, dacNum, value):
         if not (paramName in self.REGISTERS_INFO):
@@ -95,9 +94,8 @@ class AD5668:
                                                                    max=paramInfo["max"]))
             return -1
 
-        # Positions to appropriate bits
+        """Data formating to put into the register"""
         value <<= paramInfo["loc"]
-        # Restrain to concerned bits
         value &= paramInfo["mask"]
 
         value = self.register_exceptions(paramInfo, value)
@@ -107,7 +105,7 @@ class AD5668:
 
         try:
             with SPI(spi_path, spi_mode, 1000000) as spi:
-                writeBuf = (value).to_bytes(4, 'big')
+                writeBuf = self.int_to_short_list(value, 4)
                 _logger.debug("About to write raw data: " + str(writeBuf))
                 spi.transfer(writeBuf)
         except Exception as e:
@@ -117,26 +115,53 @@ class AD5668:
 
         return 0
 
+    """
+    Converts an integer to a list of byte-size shorts.
+    Ex:    idx          0     1     2
+        0x123456 --> [0x12, 0x34, 0x56] (invert=False) (BIG_ENDIAN)
+        0x123456 --> [0x56, 0x34, 0x12] (invert=True)  (LITTLE ENDIAN)
+    """
+    def int_to_short_list(self, data, fixed_length=None, invert=False):
+        retList = []
+        if fixed_length:
+            for i in range(fixed_length):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        else:
+            while(data != 0):
+                retList.append(data & 0xFF)
+                data = data >> 8
+        if invert:
+            return retList
+        else:
+            return retList[::-1]
 
     # Here are all the formatting exceptions for registers.
     def register_exceptions(self, paramInfo, value):
         return value
 
-
     def selftest(self, devNum):
         # ad5668 is write-only, skip self-test
         return 1
-
-    def swap_32bits(self, val):
-        val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF)
-        return (val << 16) | (val >> 16)
-
 
     def readout_all_registers(self, devNum):
         _logger.info("==== Device report ====")
         _logger.warning("ad5668 is write-only, skipping...")
         return 0
 
+    def __repr__(self):
+        return self._name
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+"""
+This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
+a read or write operation, depending on what is available
+"""
 class Command():
     def __init__(self, d, name="", acc=None):
         self.__dict__ = {}
@@ -148,17 +173,6 @@ class Command():
             self._acc.write_param(args[0], self._name, args[1], args[2])
         else:
             _logger.warning("Incorrect number of arguments. Ignoring")
-
-
-    def from_dict(self, d, name=""):
-        for key, value in d.items():
-            self.__dict__[key] = value
-
-    def device_summary(self):
-        report = ""
-        for addr in self._acc.ADDRESS_INFO:
-            report += ('{DeviceName: <10} :: Path:{Path: >3}, Mode:{Mode: >4}(0x{Mode:02X})\n'.format(DeviceName=self._name, Path=addr['path'], Mode=addr['mode']))
-        return report
 
     def __repr__(self):
         return self._name
