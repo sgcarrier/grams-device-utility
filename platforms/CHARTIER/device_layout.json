@@ -83,19 +83,27 @@
       "ADDRESS_INFO": [
         {
           "ch": 10,
-          "addr": 119
-        }
+          "addr": 74
+        },
+        {                          
+          "ch": 10,                
+          "addr": 75      
+        },
+        {                          
+          "ch": 10,                
+          "addr": 119      
+        }  
       ],
       "independent": false
     },
     "LMK01020": {
       "ADDRESS_INFO": [
         {
-          "path": "/dev/spidev0.0",
+          "path": "/dev/spidev1.0",
           "mode": 0
         },
         {
-          "path": "/dev/spidev0.1",
+          "path": "/dev/spidev1.1",
           "mode": 0
         }
       ],

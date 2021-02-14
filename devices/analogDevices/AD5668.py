@@ -104,10 +104,11 @@ class AD5668:
         value |= (paramInfo['addr'] << 24)
 
         try:
-            with SPI(spi_path, spi_mode, 1000000) as spi:
-                writeBuf = self.int_to_short_list(value, 4)
-                _logger.debug("About to write raw data: " + str(writeBuf))
-                spi.transfer(writeBuf)
+            bus = SPI(spi_path, spi_mode, 1000000)
+            writeBuf = self.int_to_short_list(value, 4, invert=True)
+            _logger.debug("About to write raw data: " + str(writeBuf))
+            bus.transfer(writeBuf)
+            bus.close()
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)
