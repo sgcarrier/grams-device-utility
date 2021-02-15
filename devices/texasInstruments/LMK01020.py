@@ -139,11 +139,12 @@ class LMK01020:
 
         self.LMK01020CurParams[paramInfo['addr']] = (~paramInfo['mask'] & self.LMK01020CurParams[paramInfo['addr']]) | value
         try:
-            with SPI(spi_path, spi_mode, 1000000) as spi:
-                to_send =self.LMK01020CurParams[paramInfo['addr']] + paramInfo['addr']
-                writeBuf = self.int_to_short_list(to_send, fixed_length=4)
-                _logger.debug("Writing raw data: " + str([hex(no) for no in writeBuf]))
-                spi.transfer(writeBuf)
+            bus = SPI(spi_path, spi_mode, 1000000)
+            to_send =self.LMK01020CurParams[paramInfo['addr']] + paramInfo['addr']
+            writeBuf = self.int_to_short_list(to_send, fixed_length=4)
+            _logger.debug("Writing raw data: " + str([hex(no) for no in writeBuf]))
+            bus.transfer(writeBuf)
+            bus.close()
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)

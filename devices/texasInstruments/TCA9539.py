@@ -10,7 +10,7 @@ class TCA9539:
         Class for the TCA9539, a 16-Bit I2C and SMBus I/O Expander
         The TCA9539 is a write-read device that communicates via I2C.
 
-        User Notes:
+        User Notes: - pus CONFIGURATIONPORT0/1 to 0x0
     """
 
     DEVICE_NAME = "TCA9539"
