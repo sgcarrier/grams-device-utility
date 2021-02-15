@@ -83,16 +83,24 @@
       "ADDRESS_INFO": [
         {
           "ch": 10,
-          "addr": 74
+          "addr": 116
         },
         {                          
           "ch": 10,                
-          "addr": 75      
+          "addr": 117
         },
         {                          
           "ch": 10,                
           "addr": 119      
-        }  
+        },
+        {
+          "ch": 11,
+          "addr": 116
+        },
+        {
+          "ch": 11,
+          "addr": 117
+        }
       ],
       "independent": false
     },
