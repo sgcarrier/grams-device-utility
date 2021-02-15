@@ -227,7 +227,7 @@ class ICYSHSR1:
         if (retVal != 0xDEADBEEF):
             _logger.error("Self-test of the AXI IP for the ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
             _logger.error("Expecting: " + str(0xDEADBEEF) + ", Received: " + str(retVal))
-
+            return -1
 
         # Selftest the ASIC itself now
         register_address = self.REGISTERS_INFO['ASIC_ID']['addr']
@@ -236,7 +236,7 @@ class ICYSHSR1:
         if (retVal != 0xF0E32001):
             _logger.error("Self-test of the ASIC ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
             _logger.error("Expecting: " + str(0xF0E32001) + ", Received: " + str(retVal))
-
+            return -1
 
         return 0
 
