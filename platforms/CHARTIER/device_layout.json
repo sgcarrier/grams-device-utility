@@ -45,6 +45,7 @@
       "independent": false,
       "GPIO_PINS": [{
         "WIND_OSC_OE" : 417,
+        "TDC_OSC_OE"  : 397,
         "PLL_H0_OE"   : 395,
         "PLL_H1_OE"   : 396
       }]
