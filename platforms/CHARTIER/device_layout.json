@@ -4,11 +4,11 @@
       "ADDRESS_INFO": [
         {
           "path": "/dev/spidev3.0",
-          "mode": 1
+          "mode": 2
         },
         {
           "path": "/dev/spidev3.1",
-          "mode": 1
+          "mode": 2
         }
       ],
       "independent": false
