@@ -47,3 +47,7 @@ The previous example can be done in a script or in a Python console. Component n
 TAB-completion so you don't have to remember them all in the console.
 
 
+## More Scripts
+Check out the Cephei2 project for examples of scripts using the devices and platforms in grams-device-utility
+
+
