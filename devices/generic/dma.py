@@ -15,7 +15,7 @@ class AXIDMA:
             _logger.error(e)
 
     def test_multicast(self):
-		self.clib.test_multicast(0x12345678)
+		self.clib.test_multicast(0x0)
 
     def start_data_acquisition(self):
         pass
