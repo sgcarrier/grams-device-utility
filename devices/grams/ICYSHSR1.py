@@ -45,13 +45,11 @@ class ICYSHSR1:
                     "PLL_TEST_SECTION_MUX": {"addr":        15, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":     0xFFFF},
                       "DCR_INTERVAL_WIDTH": {"addr":        16, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
                     "DCR_INTERVAL_SPACING": {"addr":        17, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-                   "WINDOW_BIT_CONFIG_LOW": {"addr":        18, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max":          1},
-                  "WINDOW_BIT_CONFIG_HIGH": {"addr":        18, "loc":  7, "mask":       0X80, "regs":   1, "min": 0, "max":          1},
-               "WINDOW_BIT_REF_CONFIG_LOW": {"addr":        18, "loc":  8, "mask":      0x100, "regs":   1, "min": 0, "max":          1},
-              "WINDOW_BIT_REF_CONFIG_HIGH": {"addr":        18, "loc":  9, "mask":     0x8000, "regs":   1, "min": 0, "max":          1},
-                  "INDIVIDUAL_SPAD_ACCESS": {"addr":        19, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-    "EVENT_DETECTION_BIT_INTEGRATION_TIME": {"addr":        20, "loc":  0, "mask":        0x1, "regs":   1, "min": 0, "max":          1},
-    "EVENT_DETECTION_BIT_COLUMN_THRESHOLD": {"addr":        20, "loc": 12, "mask":     0x1000, "regs":   1, "min": 0, "max":          1},
+                                  "WINDOW": {"addr":        18, "loc":  0, "mask":       0xFF, "regs":   1, "min": 0, "max":       0xFF},
+                        "WINDOW_REFERENCE": {"addr":        18, "loc":  8, "mask":     0XFF00, "regs":   1, "min": 0, "max":       0xFF},
+                  "INDIVIDUAL_SPAD_ACCESS": {"addr":        19, "loc":  0, "mask":        0x1, "regs":   1, "min": 0, "max":          1},
+    "EVENT_DETECTION_BIT_INTEGRATION_TIME": {"addr":        20, "loc":  0, "mask":      0xFFF, "regs":   1, "min": 0, "max":      0xFFF},
+    "EVENT_DETECTION_BIT_COLUMN_THRESHOLD": {"addr":        20, "loc": 12, "mask":    0x1F000, "regs":   1, "min": 0, "max":       0x1F},
     "ENERGY_DISCRIMINATION_TIME_THRESHOLD": {"addr":        21, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":     0xFFFF},
       "ENERGY_DISCRIMINATION_PHOTON_ORDER": {"addr":        21, "loc": 16, "mask":   0x3F0000, "regs":   1, "min": 0, "max":       0x3F},
      "ENERGY_DISCRIMINATION_ALWAYS_OUTPUT": {"addr":        21, "loc": 22, "mask":   0x400000, "regs":   1, "min": 0, "max":          1},
@@ -60,29 +58,61 @@ class ICYSHSR1:
             "PIXEL_DISABLE_QUENCH_ARRAY_0": {"addr":        24, "loc":  0, "mask": 0xFFFFFFFF, "regs":   7, "min": 0, "max": 0xFFFFFFFF},
         "DISABLE_EXTERNAL_TRIGGER_ARRAY_0": {"addr":        31, "loc":  0, "mask": 0xFFFFFFFF, "regs":   7, "min": 0, "max": 0xFFFFFFFF},
           "TIME_CONVERSION_CLOCK_PERIOD_0": {"addr":        38, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-           "DARK_COUNT_FILTER_DELTA_0_1_0": {"addr":        40, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-           "DARK_COUNT_FILTER_DELTA_2_3_0": {"addr":        41, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-           "DARK_COUNT_FILTER_DELTA_4_5_0": {"addr":        42, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
+             "DARK_COUNT_FILTER_DELTA_0_0": {"addr":        40, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_1_0": {"addr":        40, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_2_0": {"addr":        41, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_3_0": {"addr":        41, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_4_0": {"addr":        42, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_5_0": {"addr":        42, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":     0xFFFF},
              "REGISTER_WEIGHTED_AVERAGE_0": {"addr":        43, "loc":  0, "mask": 0xFFFFFFFF, "regs":  16, "min": 0, "max": 0xFFFFFFFF},
-              "COARSE_BIAS_LOOKUP_TABLE_0": {"addr":        59, "loc":  0, "mask": 0xFFFFFFFF, "regs": 196, "min": 0, "max": 0xFFFFFFFF},
-             "COARSE_SLOPE_LOOKUP_TABLE_0": {"addr":       255, "loc":  0, "mask": 0xFFFFFFFF, "regs":  98, "min": 0, "max": 0xFFFFFFFF},
-                       "SPAD_LOCAL_SKEW_0": {"addr":       353, "loc":  0, "mask": 0xFFFFFFFF, "regs":  98, "min": 0, "max": 0xFFFFFFFF},
-             "TDC_LOCAL_CORRECTION_FINE_0": {"addr":       451, "loc":  0, "mask": 0xFFFFFFFF, "regs":  25, "min": 0, "max": 0xFFFFFFFF},
-           "TDC_LOCAL_CORRECTION_COARSE_0": {"addr":       476, "loc":  0, "mask": 0xFFFFFFFF, "regs":  25, "min": 0, "max": 0xFFFFFFFF},
+            "COARSE_BIAS_LOOKUP_TABLE_0_0": {"addr":        59, "loc":  0, "mask":       0xFF, "regs": 196, "min": 0, "max":       0xFF},
+            "COARSE_BIAS_LOOKUP_TABLE_1_0": {"addr":        59, "loc":  8, "mask":     0xFF00, "regs": 196, "min": 0, "max":       0xFF},
+            "COARSE_BIAS_LOOKUP_TABLE_2_0": {"addr":        59, "loc": 16, "mask":   0xFF0000, "regs": 196, "min": 0, "max":       0xFF},
+            "COARSE_BIAS_LOOKUP_TABLE_3_0": {"addr":        59, "loc": 24, "mask": 0xFF000000, "regs": 196, "min": 0, "max":       0xFF},
+           "COARSE_SLOPE_LOOKUP_TABLE_0_0": {"addr":       255, "loc":  0, "mask":        0xF, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_1_0": {"addr":       255, "loc":  4, "mask":       0xF0, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_2_0": {"addr":       255, "loc":  8, "mask":      0xF00, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_3_0": {"addr":       255, "loc": 12, "mask":     0xF000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_4_0": {"addr":       255, "loc": 16, "mask":    0xF0000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_5_0": {"addr":       255, "loc": 20, "mask":   0xF00000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_6_0": {"addr":       255, "loc": 24, "mask":  0xF000000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_7_0": {"addr":       255, "loc": 28, "mask": 0xF0000000, "regs":  98, "min": 0, "max":        0xF},
+                  "SPAD_LOCAL_SKEW_EVEN_0": {"addr":       353, "loc":  0, "mask":     0xFFFF, "regs":  98, "min": 0, "max":     0xFFFF},
+                   "SPAD_LOCAL_SKEW_ODD_0": {"addr":       353, "loc": 16, "mask": 0xFFFF0000, "regs":  98, "min": 0, "max":     0xFFFF},
+        "TDC_LOCAL_CORRECTION_FINE_EVEN_0": {"addr":       451, "loc":  0, "mask":     0xFFFF, "regs":  25, "min": 0, "max":     0xFFFF},
+         "TDC_LOCAL_CORRECTION_FINE_ODD_0": {"addr":       451, "loc": 16, "mask": 0xFFFF0000, "regs":  25, "min": 0, "max":     0xFFFF},
+      "TDC_LOCAL_CORRECTION_COARSE_EVEN_0": {"addr":       476, "loc":  0, "mask":     0xFFFF, "regs":  25, "min": 0, "max":     0xFFFF},
+       "TDC_LOCAL_CORRECTION_COARSE_ODD_0": {"addr":       476, "loc": 16, "mask": 0xFFFF0000, "regs":  25, "min": 0, "max":     0xFFFF},
 
                "PIXEL_DISABLE_TDC_ARRAY_1": {"addr":  22+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":   2, "min": 0, "max": 0xFFFFFFFF},
             "PIXEL_DISABLE_QUENCH_ARRAY_1": {"addr":  24+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":   7, "min": 0, "max": 0xFFFFFFFF},
         "DISABLE_EXTERNAL_TRIGGER_ARRAY_1": {"addr":  31+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":   7, "min": 0, "max": 0xFFFFFFFF},
           "TIME_CONVERSION_CLOCK_PERIOD_1": {"addr":  38+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-           "DARK_COUNT_FILTER_DELTA_0_1_1": {"addr":  40+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-           "DARK_COUNT_FILTER_DELTA_2_3_1": {"addr":  41+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
-           "DARK_COUNT_FILTER_DELTA_4_5_1": {"addr":  42+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":   1, "min": 0, "max": 0xFFFFFFFF},
+             "DARK_COUNT_FILTER_DELTA_0_1": {"addr":  40+M_OFS, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_1_1": {"addr":  40+M_OFS, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_2_1": {"addr":  41+M_OFS, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_3_1": {"addr":  41+M_OFS, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_4_1": {"addr":  42+M_OFS, "loc":  0, "mask":     0xFFFF, "regs":   1, "min": 0, "max":     0xFFFF},
+             "DARK_COUNT_FILTER_DELTA_5_1": {"addr":  42+M_OFS, "loc": 16, "mask": 0xFFFF0000, "regs":   1, "min": 0, "max":     0xFFFF},
              "REGISTER_WEIGHTED_AVERAGE_1": {"addr":  43+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":  16, "min": 0, "max": 0xFFFFFFFF},
-              "COARSE_BIAS_LOOKUP_TABLE_1": {"addr":  59+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs": 196, "min": 0, "max": 0xFFFFFFFF},
-             "COARSE_SLOPE_LOOKUP_TABLE_1": {"addr": 255+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":  98, "min": 0, "max": 0xFFFFFFFF},
-                       "SPAD_LOCAL_SKEW_1": {"addr": 353+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":  98, "min": 0, "max": 0xFFFFFFFF},
-             "TDC_LOCAL_CORRECTION_FINE_1": {"addr": 451+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":  25, "min": 0, "max": 0xFFFFFFFF},
-           "TDC_LOCAL_CORRECTION_COARSE_1": {"addr": 476+M_OFS, "loc":  0, "mask": 0xFFFFFFFF, "regs":  25, "min": 0, "max": 0xFFFFFFFF}
+            "COARSE_BIAS_LOOKUP_TABLE_0_1": {"addr":  59+M_OFS, "loc":  0, "mask":       0xFF, "regs": 196, "min": 0, "max":       0xFF},
+            "COARSE_BIAS_LOOKUP_TABLE_1_1": {"addr":  59+M_OFS, "loc":  8, "mask":     0xFF00, "regs": 196, "min": 0, "max":       0xFF},
+            "COARSE_BIAS_LOOKUP_TABLE_2_1": {"addr":  59+M_OFS, "loc": 16, "mask":   0xFF0000, "regs": 196, "min": 0, "max":       0xFF},
+            "COARSE_BIAS_LOOKUP_TABLE_3_1": {"addr":  59+M_OFS, "loc": 24, "mask": 0xFF000000, "regs": 196, "min": 0, "max":       0xFF},
+           "COARSE_SLOPE_LOOKUP_TABLE_0_1": {"addr": 255+M_OFS, "loc":  0, "mask":        0xF, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_1_1": {"addr": 255+M_OFS, "loc":  4, "mask":       0xF0, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_2_1": {"addr": 255+M_OFS, "loc":  8, "mask":      0xF00, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_3_1": {"addr": 255+M_OFS, "loc": 12, "mask":     0xF000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_4_1": {"addr": 255+M_OFS, "loc": 16, "mask":    0xF0000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_5_1": {"addr": 255+M_OFS, "loc": 20, "mask":   0xF00000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_6_1": {"addr": 255+M_OFS, "loc": 24, "mask":  0xF000000, "regs":  98, "min": 0, "max":        0xF},
+           "COARSE_SLOPE_LOOKUP_TABLE_7_1": {"addr": 255+M_OFS, "loc": 28, "mask": 0xF0000000, "regs":  98, "min": 0, "max":        0xF},
+                  "SPAD_LOCAL_SKEW_EVEN_1": {"addr": 353+M_OFS, "loc":  0, "mask":     0xFFFF, "regs":  98, "min": 0, "max":     0xFFFF},
+                   "SPAD_LOCAL_SKEW_ODD_1": {"addr": 353+M_OFS, "loc": 16, "mask": 0xFFFF0000, "regs":  98, "min": 0, "max":     0xFFFF},
+        "TDC_LOCAL_CORRECTION_FINE_EVEN_1": {"addr": 451+M_OFS, "loc":  0, "mask":     0xFFFF, "regs":  25, "min": 0, "max":     0xFFFF},
+         "TDC_LOCAL_CORRECTION_FINE_ODD_1": {"addr": 451+M_OFS, "loc": 16, "mask": 0xFFFF0000, "regs":  25, "min": 0, "max":     0xFFFF},
+      "TDC_LOCAL_CORRECTION_COARSE_EVEN_1": {"addr": 476+M_OFS, "loc":  0, "mask":     0xFFFF, "regs":  25, "min": 0, "max":     0xFFFF},
+       "TDC_LOCAL_CORRECTION_COARSE_ODD_1": {"addr": 476+M_OFS, "loc": 16, "mask": 0xFFFF0000, "regs":  25, "min": 0, "max":     0xFFFF}
 
 }
 
@@ -224,9 +254,9 @@ class ICYSHSR1:
             _logger.error(e)
             return -1
 
-        if (retVal != 0xDEADBEEF):
+        if ((retVal & 0xFFFFFFFF) != 0xDEADBEEF):
             _logger.error("Self-test of the AXI IP for the ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
-            _logger.error("Expecting: " + str(0xDEADBEEF) + ", Received: " + str(retVal))
+            _logger.error("Expecting: " + str(hex(0xDEADBEEF)) + ", Received: " + str(hex(retVal)))
             return -1
 
         # Selftest the ASIC itself now
@@ -235,7 +265,7 @@ class ICYSHSR1:
 
         if (retVal != 0xF0E32001):
             _logger.error("Self-test of the ASIC ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
-            _logger.error("Expecting: " + str(0xF0E32001) + ", Received: " + str(retVal))
+            _logger.error("Expecting: " + str(hex(0xF0E32001)) + ", Received: " + str(hex(retVal)))
             return -1
 
         return 0

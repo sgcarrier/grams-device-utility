@@ -4,11 +4,11 @@
       "ADDRESS_INFO": [
         {
           "path": "/dev/spidev3.0",
-          "mode": 1
+          "mode": 2
         },
         {
           "path": "/dev/spidev3.1",
-          "mode": 1
+          "mode": 2
         }
       ],
       "independent": false
@@ -45,6 +45,7 @@
       "independent": false,
       "GPIO_PINS": [{
         "WIND_OSC_OE" : 417,
+        "TDC_OSC_OE"  : 397,
         "PLL_H0_OE"   : 395,
         "PLL_H1_OE"   : 396
       }]

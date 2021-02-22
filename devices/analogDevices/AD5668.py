@@ -105,7 +105,7 @@ class AD5668:
 
         try:
             bus = SPI(spi_path, spi_mode, 1000000)
-            writeBuf = self.int_to_short_list(value, 4, invert=True)
+            writeBuf = self.int_to_short_list(value, 4, invert=False)
             _logger.debug("About to write raw data: " + str(writeBuf))
             bus.transfer(writeBuf)
             bus.close()
