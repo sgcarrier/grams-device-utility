@@ -235,7 +235,7 @@ class ICYSHSR1:
         return 0
 
     # Here are all the formatting exceptions for registers.
-    def PLL_ENABLE_TEST(self, paramInfo, value):
+    def register_exceptions(self, paramInfo, value):
         return value
 
     def selftest(self, devNum):
