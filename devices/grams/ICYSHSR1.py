@@ -225,9 +225,10 @@ class ICYSHSR1:
         value = self.register_exceptions(paramInfo, value)
 
         #Convert to 64 bits here, just in case
-        value = c_ulonglong(value)
+        #value = c_ulonglong(value)
         #Add register address
-        value += c_longlong(paramInfo['addr'] + register_offset) << 32
+        #value += c_ulonglong((paramInfo['addr'] + register_offset) << 32)
+        value = ((paramInfo['addr'] + register_offset) << 32) | value
 
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
         self.libc.ic_write(c_ushort(ic_dev_num), c_ulonglong(value))
@@ -235,7 +236,7 @@ class ICYSHSR1:
         return 0
 
     # Here are all the formatting exceptions for registers.
-    def PLL_ENABLE_TEST(self, paramInfo, value):
+    def register_exceptions(self, paramInfo, value):
         return value
 
     def selftest(self, devNum):
