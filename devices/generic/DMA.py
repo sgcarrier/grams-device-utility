@@ -8,7 +8,7 @@ from ctypes import *
 
 _logger = logging.getLogger(__name__)
 
-class AXIDMA:
+class DMA:
 
     def __init__(self):
         try:
@@ -36,8 +36,7 @@ class AXIDMA:
 
 
     def set_meta_data(self, path, acqID, format, attributes=None):
-
-        message = "ACQ_ID:"+str(acqID)+",PATH:"+path+",FORMAT:"+str(format)+",END:#!"
+        message_bytes = str.encode("ACQ_ID:") + acqID.to_bytes(4, 'little') + str.encode(",PATH:" + path + ",FORMAT:") + format.to_bytes(4, 'little') + str.encode(",END:#!")
         multicast_group = ('238.0.0.8', 19001)
 
         # Create the datagram socket
@@ -46,6 +45,35 @@ class AXIDMA:
         ttl = struct.pack('b', 1)
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 
-        sock.sendto(message, multicast_group)
+        sock.sendto(message_bytes, multicast_group)
 
         sock.close()
+
+    def test_data(self, acqID):
+
+        message_pre = "SRC:CHARTIER/ASIC0,LEN:32,ACQ_ID:"
+        message_id = acqID.to_bytes(4, 'little')
+        message_data = ",DATA:"
+        message_end = ",END:#!"
+        data = (0xAAAAAAAAAAAAAAAA).to_bytes(8, 'little') + (0x0000000000000002).to_bytes(8, 'little') + (0x1234567887654321).to_bytes(8, 'little') + (0xAAAAAAABAAAAAAAB).to_bytes(8, 'little')
+        message_bytes = str.encode(message_pre) + message_id + str.encode(message_data) + data + str.encode(message_end)
+        multicast_group = ('238.0.0.8', 19002)
+
+        # Create the datagram socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        ttl = struct.pack('b', 1)
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
+
+        sock.sendto(message_bytes, multicast_group)
+
+        sock.close()
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    dma = DMA()
+
+    dma.set_meta_data("test/path/hope/despair", acqID=1234, format=1)
+
+    dma.test_data(1234)

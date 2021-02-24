@@ -180,6 +180,12 @@
         "DIP6"                      : 510,
         "DIP7"                      : 511
       }]
+    },
+    "DMA": {
+      "independent": false,
+      "GPIO_PINS": [{
+        "SHORT_FRAME"               : 421
+      }]
     }
   },
   "grams": {
