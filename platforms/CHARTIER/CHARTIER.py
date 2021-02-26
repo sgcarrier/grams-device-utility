@@ -21,31 +21,6 @@ class CHARTIER():
         _logger.info(self.layout2Report(self.layout, name))
 
 
-        # Setup logger
-        root = logging.getLogger()
-        root.setLevel(logging.DEBUG)
-
-        handler = logging.StreamHandler(sys.stderr)
-        handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(levelname)s :: %(asctime)s :: %(name)s :: %(funcName)s :: %(message)s')
-        handler.setFormatter(formatter)
-
-        try:
-            os.mkdir(logPath)
-        except FileExistsError:
-            # directory already exists
-            pass
-        except OSError:
-            print("ERROR :: Could not create log directory, using local directory instead.")
-            logPath = "./"
-
-        fileName = str(name) + "_" + time.strftime("%Y%m%d-%H%M%S")
-        fileHandler = logging.FileHandler("{0}/{1}.log".format(logPath, fileName))
-        fileHandler.setFormatter(formatter)
-
-        root.addHandler(fileHandler)
-        root.addHandler(handler)
-
     def from_dict_layout(self, d):
         for manu, dev in d.items():
             for devName, attr in dev.items():

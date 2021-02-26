@@ -171,12 +171,13 @@ class ICYSHSR1:
         retval = c_ulonglong(0)
         try:
             retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(0))
+            _logger.info("Read data and reset output mux to 0")
         except Exception as e:
             _logger.error("could not read from IC:")
             _logger.error(e)
             return -1
 
-        return retval
+        return (retval & 0xFFFFFFFF)
 
     def write_param(self, devNum, paramName, value, register_offset=0):
         if not (paramName in self.REGISTERS_INFO):
@@ -224,11 +225,11 @@ class ICYSHSR1:
 
         value = self.register_exceptions(paramInfo, value)
 
-        #Convert to 64 bits here, just in case
-        #value = c_ulonglong(value)
-        #Add register address
-        #value += c_ulonglong((paramInfo['addr'] + register_offset) << 32)
-        value = ((paramInfo['addr'] + register_offset) << 32) | value
+        curr_value = self.read_param(devNum=devNum, paramName=paramName, register_offset=register_offset)
+
+        curr_value_filtered = curr_value & ((~paramInfo["mask"]) & 0xFFFFFFFF)
+
+        value = ((paramInfo['addr'] + register_offset) << 32) | (value | curr_value_filtered)
 
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
         self.libc.ic_write(c_ushort(ic_dev_num), c_ulonglong(value))
