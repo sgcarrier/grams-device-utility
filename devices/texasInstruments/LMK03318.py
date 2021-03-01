@@ -224,7 +224,14 @@ class LMK03318:
     def setup(self):
         ''' Must toggle PDN before sending data or else the I2C line will lock up... '''
         for i in range(len(self.GPIO_PINS)):
+            self.gpio_set(i, "CFGSEL0", False)
+            self.gpio_set(i, "CFGSEL1", False)
+            time.sleep(0.5)
+            self.gpio_set(i, "CFGSEL0", True)
+            self.gpio_set(i, "CFGSEL1", True)
+            time.sleep(0.5)
             self.gpio_set(i, "PDN", False)
+            time.sleep(0.5)
             self.gpio_set(i, "PDN", True)
 
     def register_device(self, channel, address):
