@@ -13,8 +13,9 @@ class LMK03318:
         User Notes:
         - BEFORE talking to it on i2c line, toggle the PDN pin. (see setup() function). If you don't the I2C might be
           unusable
-        - Toggle the SYNC pin after programming.
+        - Toggle the SYNC pin after programming. leave a sleep() in between
         - Make sure the Fvco is within its range (4.8-5.4 GHz), if it's not locked, it won't output anything
+        - Toggling the register PLL_PDN 1->0 is important to lock the VCO do it right before the sync
     """
 
     DEVICE_NAME = "LMK03318"
