@@ -265,7 +265,7 @@ class ICYSHSR1:
         register_address = self.REGISTERS_INFO['ASIC_ID']['addr']
         retVal = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(register_address), c_ushort(0x0))
 
-        if (retVal != 0xF0E32001):
+        if ((retVal & 0xFFFFFFFF) != 0xF0E32001):
             _logger.error("Self-test of the ASIC ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
             _logger.error("Expecting: " + str(hex(0xF0E32001)) + ", Received: " + str(hex(retVal)))
             return -1
