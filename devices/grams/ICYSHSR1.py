@@ -122,6 +122,7 @@ class ICYSHSR1:
     def __init__(self, DLLName="icyshsr1-lib.so", name="ICYSHSR1"):
         self.__dict__ = {}
         self._name = name
+        self.previousOutputMuxValue = 0
         try:
             self.libc = CDLL(DLLName)
         except Exception as e:
@@ -170,8 +171,8 @@ class ICYSHSR1:
 
         retval = c_ulonglong(0)
         try:
-            retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(0))
-            _logger.info("Read data and reset output mux to 0")
+            retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue))
+            _logger.info("Read data and reset output mux to " + str(self.previousOutputMuxValue))
         except Exception as e:
             _logger.error("could not read from IC:")
             _logger.error(e)
@@ -238,6 +239,11 @@ class ICYSHSR1:
 
     # Here are all the formatting exceptions for registers.
     def register_exceptions(self, paramInfo, value):
+        
+        if ((paramInfo['addr'] == 1) and (paramInfo['loc'] == 0)):
+            if value != 2:
+                self.previousOutputMuxValue = value
+        
         return value
 
     def selftest(self, devNum):
