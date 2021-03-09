@@ -37,7 +37,7 @@ class DMA:
     def set_meta_data(self, filename, path, acqID, format, attributes=None):
         message_bytes = str.encode("ACQ_ID:") + acqID.to_bytes(4, 'little') + \
                         str.encode(",FILENAME:" + filename + ",PATH:" + path + ",FORMAT:") + format.to_bytes(4, 'little') + \
-                        str.encode(",ATTRIBUTES:") + str.encode(attributes) + str.encode(",END:#!")
+                        str.encode(",ATTRIBUTES:") + str.encode(str(attributes)) + str.encode(",END:#!")
         multicast_group = ('238.0.0.8', 19001)
 
         # Create the datagram socket
