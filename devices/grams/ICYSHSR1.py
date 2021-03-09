@@ -178,6 +178,7 @@ class ICYSHSR1:
             _logger.error(e)
             return -1
 
+        time.sleep(0.01)
         return (retval & 0xFFFFFFFF)
 
     def write_param(self, devNum, paramName, value, register_offset=0):
@@ -235,6 +236,7 @@ class ICYSHSR1:
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
         self.libc.ic_write(c_ushort(ic_dev_num), c_ulonglong(value))
 
+        time.sleep(0.01)
         return 0
 
     # Here are all the formatting exceptions for registers.
@@ -323,6 +325,8 @@ class Command():
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)
+
+        time.sleep(0.01)
 
     def from_dict(self, d, name=""):
         for key, value in d.items():

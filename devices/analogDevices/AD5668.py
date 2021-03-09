@@ -114,6 +114,7 @@ class AD5668:
             _logger.error(e)
             return -1
 
+        time.sleep(0.01)
         return 0
 
     """
@@ -174,6 +175,8 @@ class Command():
             self._acc.write_param(args[0], self._name, args[1], args[2])
         else:
             _logger.warning("Incorrect number of arguments. Ignoring")
+
+        time.sleep(0.01)
 
     def __repr__(self):
         return self._name

@@ -283,6 +283,7 @@ class LMK03318:
         val >>= paramInfo['loc']
         val = self.register_exceptions(paramInfo, val)
 
+        time.sleep(0.01)
         return val
 
     def write_param(self, devNum, paramName, value):
@@ -347,6 +348,7 @@ class LMK03318:
             _logger.error(e)
             return -1
 
+        time.sleep(0.01)
         return 0
 
     """
@@ -477,6 +479,8 @@ class Command():
             return self._acc.read_param(args[0], self._name)
         else:
             _logger.warning("Incorrect number of arguments. Ignoring")
+
+        time.sleep(0.01)
 
     def __repr__(self):
         return self._name
