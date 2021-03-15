@@ -123,6 +123,19 @@
         "TRIG_GOE"    : 402,
         "TRIG_SYNC"   : 400
       }]
+    },
+    "TMP1075": {
+      "ADDRESS_INFO": [
+        {
+          "ch": 16,
+          "addr": 72
+        },
+        {
+          "ch": 16,
+          "addr": 73
+        }
+      ],
+      "independent": false
     }
   },
   "generic": {

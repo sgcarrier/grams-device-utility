@@ -317,7 +317,7 @@ class Command():
     def __call__(self, *args):
         try:
             if len(args) == 2:
-                self._acc.read_param(args[0], self._name, args[1])
+                return self._acc.read_param(args[0], self._name, args[1])
             elif len(args) == 3:
                 self._acc.write_param(args[0], self._name, args[1], args[2])
             else:
