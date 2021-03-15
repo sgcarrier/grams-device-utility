@@ -123,6 +123,7 @@ class ICYSHSR1:
         self.__dict__ = {}
         self._name = name
         self.previousOutputMuxValue = 0
+        self.currentPP = 0
         try:
             self.libc = CDLL(DLLName)
         except Exception as e:
@@ -171,12 +172,15 @@ class ICYSHSR1:
 
         retval = c_ulonglong(0)
         try:
-            retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue))
+            retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
             _logger.info("Read data and reset output mux to " + str(self.previousOutputMuxValue))
         except Exception as e:
             _logger.error("could not read from IC:")
             _logger.error(e)
             return -1
+
+        retval &= paramInfo['mask']
+        retval >>= paramInfo['loc']
 
         time.sleep(0.01)
         return (retval & 0xFFFFFFFF)
@@ -226,14 +230,16 @@ class ICYSHSR1:
         value &= paramInfo["mask"]
 
         value = self.register_exceptions(paramInfo, value)
+        ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
 
-        curr_value = self.read_param(devNum=devNum, paramName=paramName, register_offset=register_offset)
+        #curr_value = self.read_param(devNum=devNum, paramName=paramName, register_offset=register_offset)
+        curr_value = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset),
+                                   c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
 
         curr_value_filtered = curr_value & ((~paramInfo["mask"]) & 0xFFFFFFFF)
 
         value = ((paramInfo['addr'] + register_offset) << 32) | (value | curr_value_filtered)
 
-        ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
         self.libc.ic_write(c_ushort(ic_dev_num), c_ulonglong(value))
 
         time.sleep(0.01)
@@ -245,7 +251,8 @@ class ICYSHSR1:
         if ((paramInfo['addr'] == 1) and (paramInfo['loc'] == 0)):
             if value != 2:
                 self.previousOutputMuxValue = value
-        
+        elif((paramInfo['addr'] == 1) and (paramInfo['loc'] == 16)):
+            self.currentPP = value
         return value
 
     def selftest(self, devNum):
@@ -271,7 +278,7 @@ class ICYSHSR1:
 
         # Selftest the ASIC itself now
         register_address = self.REGISTERS_INFO['ASIC_ID']['addr']
-        retVal = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(register_address), c_ushort(0x0))
+        retVal = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(register_address), c_ushort(0x0), c_ushort(0x0))
 
         if ((retVal & 0xFFFFFFFF) != 0xF0E32001):
             _logger.error("Self-test of the ASIC ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
