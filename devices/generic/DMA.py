@@ -20,11 +20,11 @@ class DMA:
     def test_multicast(self):
         self.clib.test_multicast(0x0)
 
-    def start_data_acquisition(self, acqId, maxSamples=-1, maxTime=-1, minimumBuffer=0):
+    def start_data_acquisition(self, acqId, maxSamples=-1, maxTime=-1, maxEmptyTimeout=-1):
         _logger.info("Starting acquisition with multicast")
 
         #The following line is blocking
-        ret = self.clib.start_acquisition_multicast(c_int(maxSamples), c_int(maxTime), c_int(acqId), c_int(minimumBuffer))
+        ret = self.clib.start_acquisition_multicast(c_int(maxSamples), c_int(maxTime), c_int(acqId), c_int(maxEmptyTimeout))
 
         if ret != 0:
             _logger.error("Acquisition ended with an error...")
