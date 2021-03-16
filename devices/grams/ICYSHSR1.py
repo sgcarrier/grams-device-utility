@@ -157,6 +157,34 @@ class ICYSHSR1:
         return self.__dict__[key]
 
 
+    def fetchTwiceAndCheck(self, ic_dev_num, addr, prevMux, currPP):
+        retval1 = self.libc.ic_read(c_ushort(ic_dev_num),
+                                    c_ulonglong(addr),
+                                    c_ushort(prevMux),
+                                    c_ushort(currPP))
+        time.sleep(0.01)
+        retval2 = self.libc.ic_read(c_ushort(ic_dev_num),
+                                    c_ulonglong(addr),
+                                    c_ushort(prevMux),
+                                    c_ushort(currPP))
+        time.sleep(0.01)
+        if (retval1 == retval2):
+            return retval1
+        else:
+            _logger.warning("Error in command comms, fetching again")
+            retval3 = self.libc.ic_read(c_ushort(ic_dev_num),
+                                        c_ulonglong(addr),
+                                        c_ushort(prevMux),
+                                        c_ushort(currPP))
+            time.sleep(0.01)
+            if (retval1 == retval3):
+                return retval1
+            else:
+                return retval3
+
+
+
+
     def read_param(self, devNum, paramName, register_offset=0):
         if not (paramName in self.REGISTERS_INFO):
             _logger.error(str(paramName) + " is an invalid parameter name")
@@ -172,7 +200,8 @@ class ICYSHSR1:
 
         retval = c_ulonglong(0)
         try:
-            retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
+            #retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
+            retval = self.fetchTwiceAndCheck(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
             _logger.info("Read data and reset output mux to " + str(self.previousOutputMuxValue))
         except Exception as e:
             _logger.error("could not read from IC:")
@@ -233,7 +262,7 @@ class ICYSHSR1:
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
 
         #curr_value = self.read_param(devNum=devNum, paramName=paramName, register_offset=register_offset)
-        curr_value = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset),
+        curr_value = self.fetchTwiceAndCheck(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset),
                                    c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
 
         curr_value_filtered = curr_value & ((~paramInfo["mask"]) & 0xFFFFFFFF)
@@ -278,7 +307,7 @@ class ICYSHSR1:
 
         # Selftest the ASIC itself now
         register_address = self.REGISTERS_INFO['ASIC_ID']['addr']
-        retVal = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(register_address), c_ushort(0x0), c_ushort(0x0))
+        retVal = self.fetchTwiceAndCheck(c_ushort(ic_dev_num), c_ulonglong(register_address), c_ushort(0x0), c_ushort(0x0))
 
         if ((retVal & 0xFFFFFFFF) != 0xF0E32001):
             _logger.error("Self-test of the ASIC ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")
