@@ -201,7 +201,7 @@ class ICYSHSR1:
         retval = c_ulonglong(0)
         try:
             #retval = self.libc.ic_read(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
-            retval = self.fetchTwiceAndCheck(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset), c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
+            retval = self.fetchTwiceAndCheck(ic_dev_num, (paramInfo['addr'] + register_offset), self.previousOutputMuxValue, self.currentPP)
             _logger.info("Read data and reset output mux to " + str(self.previousOutputMuxValue))
         except Exception as e:
             _logger.error("could not read from IC:")
@@ -262,8 +262,8 @@ class ICYSHSR1:
         ic_dev_num = self.ADDRESS_INFO[devNum]['devNum']
 
         #curr_value = self.read_param(devNum=devNum, paramName=paramName, register_offset=register_offset)
-        curr_value = self.fetchTwiceAndCheck(c_ushort(ic_dev_num), c_ulonglong(paramInfo['addr'] + register_offset),
-                                   c_ushort(self.previousOutputMuxValue), c_ushort(self.currentPP))
+        curr_value = self.fetchTwiceAndCheck(ic_dev_num, (paramInfo['addr'] + register_offset),
+                                   self.previousOutputMuxValue, self.currentPP)
 
         curr_value_filtered = curr_value & ((~paramInfo["mask"]) & 0xFFFFFFFF)
 
@@ -307,7 +307,7 @@ class ICYSHSR1:
 
         # Selftest the ASIC itself now
         register_address = self.REGISTERS_INFO['ASIC_ID']['addr']
-        retVal = self.fetchTwiceAndCheck(c_ushort(ic_dev_num), c_ulonglong(register_address), c_ushort(0x0), c_ushort(0x0))
+        retVal = self.fetchTwiceAndCheck(ic_dev_num, register_address, 0x0, 0x0)
 
         if ((retVal & 0xFFFFFFFF) != 0xF0E32001):
             _logger.error("Self-test of the ASIC ICYSHSR1 #" + str(ic_dev_num) + " failed. Check your connection...")

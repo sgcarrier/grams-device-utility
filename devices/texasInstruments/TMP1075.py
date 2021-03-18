@@ -18,16 +18,16 @@ class TMP1075:
     #All register info concerning all LMK parameters
     REGISTERS_INFO = {
         #  if min=max=0, read-only, min=max=1 Self-clearing)
-        "T":   { "addr":  0, "loc":  4, "mask": 0xFFF0, "regs": 1, "min": 0, "max":     0},
-        "SD":  { "addr":  1, "loc":  8, "mask":  0x100, "regs": 1, "min": 0, "max":     1},
-        "TM":  { "addr":  1, "loc":  9, "mask":  0x200, "regs": 1, "min": 0, "max":     1},
-        "POL": { "addr":  1, "loc": 10, "mask":  0x400, "regs": 1, "min": 0, "max":     1},
-        "F":   { "addr":  1, "loc": 11, "mask": 0x1800, "regs": 1, "min": 0, "max":     3},
-        "R":   { "addr":  1, "loc": 13, "mask": 0x6000, "regs": 1, "min": 0, "max":     3},
-        "OS":  { "addr":  1, "loc": 15, "mask": 0x8000, "regs": 1, "min": 0, "max":     1},
-        "L":   { "addr":  3, "loc":  4, "mask": 0xFFF0, "regs": 1, "min": 0, "max": 0xFFF},
-        "H":   { "addr":  3, "loc":  4, "mask": 0xFFF0, "regs": 1, "min": 0, "max": 0xFFF},
-        "DID": { "addr": 15, "loc":  0, "mask": 0xFFFF, "regs": 1, "min": 0, "max":     0},
+        "T":   { "addr":  0, "loc":  4, "mask": 0xFFF0, "regs": 2, "min": 0, "max":     0},
+        "SD":  { "addr":  1, "loc":  8, "mask":  0x100, "regs": 2, "min": 0, "max":     1},
+        "TM":  { "addr":  1, "loc":  9, "mask":  0x200, "regs": 2, "min": 0, "max":     1},
+        "POL": { "addr":  1, "loc": 10, "mask":  0x400, "regs": 2, "min": 0, "max":     1},
+        "F":   { "addr":  1, "loc": 11, "mask": 0x1800, "regs": 2, "min": 0, "max":     3},
+        "R":   { "addr":  1, "loc": 13, "mask": 0x6000, "regs": 2, "min": 0, "max":     3},
+        "OS":  { "addr":  1, "loc": 15, "mask": 0x8000, "regs": 2, "min": 0, "max":     1},
+        "L":   { "addr":  3, "loc":  4, "mask": 0xFFF0, "regs": 2, "min": 0, "max": 0xFFF},
+        "H":   { "addr":  3, "loc":  4, "mask": 0xFFF0, "regs": 2, "min": 0, "max": 0xFFF},
+        "DID": { "addr": 15, "loc":  0, "mask": 0xFFFF, "regs": 2, "min": 0, "max":     0},
 }
 
     ADDRESS_INFO = []
