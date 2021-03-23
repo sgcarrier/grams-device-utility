@@ -20,6 +20,10 @@ class DMA:
     def test_multicast(self):
         self.clib.test_multicast(0x0)
 
+    def getCurrentSamples(self):
+        return self.clib.get_current_samples()
+
+
     def start_data_acquisition(self, acqId, maxSamples=-1, maxTime=-1, maxEmptyTimeout=-1):
         _logger.info("Starting acquisition with multicast")
 
@@ -33,6 +37,9 @@ class DMA:
         self.clib.stop_acquisition()
         _logger.info("Stopped acquisition")
 
+    def test_hdf5_write(self):
+        self.clib.test_hdf_write()
+        _logger.info("Done writing test file")
 
     def set_meta_data(self, filename, path, acqID, format, attributes=None):
         message_bytes = str.encode("ACQ_ID:") + acqID.to_bytes(4, 'little') + \
