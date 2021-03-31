@@ -36,9 +36,9 @@ class DMA:
     def start_data_acquisition_HDF(self, filename, groupName, datasetName, maxSamples, maxEmptyTimeout=-1):
         _logger.info("Starting acquisition with HDF5 file")
 
-        ret = self.clib.start_acquisition_hdf5(c_char_p(filename),
-                                               c_char_p(groupName),
-                                               c_char_p(groupName + '/' + datasetName),
+        ret = self.clib.start_acquisition_hdf5(c_char_p(filename.encode('utf-8')),
+                                               c_char_p(groupName.encode('utf-8')),
+                                               c_char_p(datasetName.encode('utf-8')),
                                                c_int64(maxSamples),
                                                c_int(maxEmptyTimeout))
 
