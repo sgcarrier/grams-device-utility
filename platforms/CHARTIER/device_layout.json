@@ -167,8 +167,8 @@
         "SMA_OUT_1"                 : 419,
         "FMC_CLOCK_SYNTH_SYNC"      : 420,
         "SHORT_FRAME"               : 421,
-        "MUX_COMM_SELECT"           : 422,
-        "EN_COMM_COUNTER"           : 423
+        "MUX_COMM_SELECT"           : 423,
+        "EN_COMM_COUNTER"           : 424
       }]
     },
     "LED": {
