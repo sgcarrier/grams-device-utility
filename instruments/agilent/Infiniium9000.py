@@ -75,6 +75,11 @@ class Infiniium9000:
             value = Command(value, str(key), self)
             self.__dict__[key] = value
 
+        self.resourceManager = visa.ResourceManager('@py')
+
+    def __del__(self):
+        self.resourceManager.close()
+
     def register_device(self, address):
         self.ADDRESS_INFO.append({'addr': address})
         _logger.debug("Added Infiniium instrument with addr: " + str(address))
@@ -95,28 +100,21 @@ class Infiniium9000:
         visa_addr = self.ADDRESS_INFO[devNum]['addr']
 
         try:
-            resourceManager = visa.ResourceManager('@py')
-            session = resourceManager.open_resource(visa_addr)
+            self.resourceManager = visa.ResourceManager('@py')
+            session = self.resourceManager.open_resource(visa_addr)
             # For Serial and TCP/IP socket connections enable the read Termination Character, or read's will timeout
             if session.resource_name.startswith('ASRL') or session.resource_name.endswith('SOCKET'):
                 session.read_termination = '\n'
-
-            bus = smbus.SMBus(i2c_ch)
-            retVal = bus.read_i2c_block_data(i2c_addr, paramInfo["addr"], paramInfo["regs"])
-            bus.close()
+            session.write()
+            retVal = session.read()
         except visa.Error as e:
             _logger.error(e)
             _logger.error("Couldn't connect to " + str(visa_addr) + " . Aborting...")
-        except FileNotFoundError as e:
-            _logger.error(e)
-            _logger.error("Could not find i2c bus at channel: " + str(i2c_ch) + ", address: " + str(i2c_addr) + ".Check your connection....")
-            return -1
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)
             return -1
 
-        val = int.from_bytes(retVal, byteorder='big', signed=False)
 
         ''' Data formating from the register '''
         val &= paramInfo['mask']
