@@ -33,7 +33,7 @@ class DMA:
         if ret != 0:
             _logger.error("Acquisition ended with an error...")
 
-    def start_data_acquisition_HDF(self, filename, groupName, datasetName, maxSamples, maxEmptyTimeout=-1, type=0, compression=0):
+    def start_data_acquisition_HDF(self, filename, groupName, datasetName, maxSamples, maxEmptyTimeout=-1, type=1, compression=0):
         _logger.info("Starting acquisition with HDF5 file")
 
         ret = self.clib.start_acquisition_hdf5(c_char_p(filename.encode('utf-8')),
