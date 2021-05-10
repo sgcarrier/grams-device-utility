@@ -14,6 +14,8 @@ Welcome to grams-device-utility's documentation!
 
 Indices and tables
 ==================
+   Install
+   Support
 
 * :ref:`genindex`
 * :ref:`modindex`
