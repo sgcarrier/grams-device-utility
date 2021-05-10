@@ -223,7 +223,11 @@ class LMK03318:
             self.__dict__[key] = value
 
     def setup(self):
-        ''' Must toggle PDN before sending data or else the I2C line will lock up... '''
+        """
+        The functions that must be run before anything is done on the line.
+        In this case: Must toggle PDN before sending data or else the I2C line will lock up...
+        :return: None
+        """
         for i in range(len(self.GPIO_PINS)):
             self.gpio_set(i, "CFGSEL0", False)
             self.gpio_set(i, "CFGSEL1", False)
@@ -236,10 +240,20 @@ class LMK03318:
             self.gpio_set(i, "PDN", True)
 
     def register_device(self, channel, address):
+        """
+        Register a new LMK03318 device.
+        :param channel: I2C Channel number
+        :param address: I2C address
+        :return: None
+        """
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
         _logger.debug("Added LMK03318 device with ch: " + str(channel) + " and addr: " + str(address))
 
     def device_summary(self):
+        """
+        Returns a summary of all the LMK03318 devices.
+        :return: String report
+        """
         report = ""
         for addr in self.ADDRESS_INFO:
             report += ('{DeviceName: <10} :: Channel:{Channel: >3}, Address:{Address: >4}(0x{Address:02X})\n'.format(DeviceName=self._name, Channel=addr['ch'], Address=addr['addr']))
@@ -281,7 +295,7 @@ class LMK03318:
         ''' Data formating from the register '''
         val &= paramInfo['mask']
         val >>= paramInfo['loc']
-        val = self.register_exceptions(paramInfo, val)
+        val = self._register_exceptions(paramInfo, val)
 
         time.sleep(0.01)
         return val
@@ -319,7 +333,7 @@ class LMK03318:
         ''' Data formating to put into the register '''
         value <<= paramInfo["loc"]
         value &= paramInfo["mask"]
-        value = self.register_exceptions(paramInfo, value)
+        value = self._register_exceptions(paramInfo, value)
 
         try:
             bus = smbus.SMBus(i2c_ch)
@@ -351,13 +365,18 @@ class LMK03318:
         time.sleep(0.01)
         return 0
 
-    """
-    Converts an integer to a list of byte-size shorts.
-    Ex:    idx          0     1     2
-        0x123456 --> [0x12, 0x34, 0x56] (invert=False) (BIG_ENDIAN)
-        0x123456 --> [0x56, 0x34, 0x12] (invert=True)  (LITTLE ENDIAN)
-    """
+
     def int_to_short_list(self, data, fixed_length=None, invert=False):
+        """
+        Converts an integer to a list of byte-size shorts.
+        Ex:    idx          0     1     2
+            0x123456 --> [0x12, 0x34, 0x56] (invert=False) (BIG_ENDIAN)
+            0x123456 --> [0x56, 0x34, 0x12] (invert=True)  (LITTLE ENDIAN)
+        :param data: integer to convert
+        :param fixed_length: Force the final length in bytes
+        :param invert: Little (False) or big (True) endian
+        :return: List of bytes
+        """
         retList = []
         if fixed_length:
             for i in range(fixed_length):
@@ -372,12 +391,23 @@ class LMK03318:
         else:
             return retList[::-1]
 
-    ''' Here are all the formatting exceptions for registers. '''
-    def register_exceptions(self, paramInfo, value):
+
+    def _register_exceptions(self, paramInfo, value):
+        """
+        Applies formatting exceptions for registers. There are none for the LMK03318, this is here for compatibility.
+        :param paramInfo: The info dictionary about the parameter
+        :param value: The new to be written to the register or read from the register
+        :return: modified value if an exception applies
+        """
         return value
 
 
     def selftest(self, devNum):
+        """
+        Run a simple selftest to see if the device responds.
+        :param devNum: Device number to test
+        :return: <0 on failure, 0 on success
+        """
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
         val = self.read_param(devNum, "VNDRID")
@@ -389,6 +419,11 @@ class LMK03318:
         return 0
 
     def readout_all_registers(self, devNum):
+        """
+        Display on the logger the contents of the all the registers of the device.
+        :param devNum: Device number
+        :return: None
+        """
         i2c_addr = self.ADDRESS_INFO[devNum]['addr']
         i2c_ch = self.ADDRESS_INFO[devNum]['ch']
         _logger.info("==== Device report ====")
@@ -399,6 +434,13 @@ class LMK03318:
             _logger.info('Param Name: {ParamName: <20}, Param Value: {Value: <16}'.format(ParamName=key, Value=val))
 
     def gpio_set(self, devNum, name, value):
+        """
+        Set the GPIO pin associated to the device.
+        :param devNum: Device number
+        :param name: Name string of the pin
+        :param value: Value to set (True/False)
+        :return: <0 on failure, 0 on success
+        """
         if not self.GPIO_PINS:
             _logger.warning("No gpio pins defined. Aborting...")
             return -1
@@ -414,44 +456,7 @@ class LMK03318:
 
         return 0
 
-    def set_frequency(self, devNum, freq):
 
-        """
-                F_VCO = (F_REF / R) × D × [(INT + NUM / DEN) / M]
-                F_OUT = F_VCO / (P × OUTDIV)
-         """
-        FVCO = 5000000000
-        self.PLL_P(devNum, 7)
-        self.CH_0_MUTE(devNum, 0)
-        self.CH_3_MUTE(devNum, 0)
-        self.INSEL_PLL(devNum, 2)
-        self.OUT_3_MODE1(devNum, 0)
-        self.OUT_3_SEL(devNum, 1)
-
-        ## Config de base pour le output
-        self.PRIBUFSEL(devNum, 1)
-        self.AC_MODE_PRI(devNum, 0)
-        self.DIFFTERM_PRI(devNum, 1)
-        self.TERM2GND_PRI(devNum, 0)
-        self.SECBUFSEL(devNum, 3)
-
-        self.OUT_0_SEL(devNum, 1)
-        self.OUT_0_MODE1(devNum, 0)
-        self.OUT_3_SEL(devNum, 1)
-        self.OUT_3_MODE1(devNum, 0)
-        self.PLL_NDIV(devNum, 40)
-        self.PLLRDIV(devNum, 0)
-        self.PLLMDIV(devNum, 1)
-        self.OUT_0_1_DIV(devNum, 100)
-        self.OUT_2_3_DIV(devNum, 100)
-        self.PRI_D(devNum, 0)
-        self.PLL_P(devNum, 7)
-
-        self.PLL_PDN(devNum, 1)
-        self.PLL_PDN(devNum, 0)
-
-        self.gpio_set(devNum, "SYNC", 0)
-        self.gpio_set(devNum, "SYNC", 1)
 
     def __repr__(self):
         return self._name
@@ -462,11 +467,16 @@ class LMK03318:
     def __getitem__(self, key):
         return self.__dict__[key]
 
-"""
-This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
-a read or write operation, depending on what is available
-"""
-class Command():
+
+class Command:
+    """
+    This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
+    a read or write operation, depending on what is available.
+    For example:
+       > d = Device()
+       > d.register_name(0)  # read operation of the device number 0
+       > d.register_name(0, 1) # writing 1 to the device 0
+    """
     def __init__(self, d, name="", acc=None):
         self.__dict__ = {}
         self._name = name
@@ -507,4 +517,45 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     print((args))
+'''
+
+'''
+    def set_frequency(self, devNum, freq):
+
+        """
+                F_VCO = (F_REF / R) × D × [(INT + NUM / DEN) / M]
+                F_OUT = F_VCO / (P × OUTDIV)
+         """
+        FVCO = 5000000000
+        self.PLL_P(devNum, 7)
+        self.CH_0_MUTE(devNum, 0)
+        self.CH_3_MUTE(devNum, 0)
+        self.INSEL_PLL(devNum, 2)
+        self.OUT_3_MODE1(devNum, 0)
+        self.OUT_3_SEL(devNum, 1)
+
+        ## Config de base pour le output
+        self.PRIBUFSEL(devNum, 1)
+        self.AC_MODE_PRI(devNum, 0)
+        self.DIFFTERM_PRI(devNum, 1)
+        self.TERM2GND_PRI(devNum, 0)
+        self.SECBUFSEL(devNum, 3)
+
+        self.OUT_0_SEL(devNum, 1)
+        self.OUT_0_MODE1(devNum, 0)
+        self.OUT_3_SEL(devNum, 1)
+        self.OUT_3_MODE1(devNum, 0)
+        self.PLL_NDIV(devNum, 40)
+        self.PLLRDIV(devNum, 0)
+        self.PLLMDIV(devNum, 1)
+        self.OUT_0_1_DIV(devNum, 100)
+        self.OUT_2_3_DIV(devNum, 100)
+        self.PRI_D(devNum, 0)
+        self.PLL_P(devNum, 7)
+
+        self.PLL_PDN(devNum, 1)
+        self.PLL_PDN(devNum, 0)
+
+        self.gpio_set(devNum, "SYNC", 0)
+        self.gpio_set(devNum, "SYNC", 1)
 '''

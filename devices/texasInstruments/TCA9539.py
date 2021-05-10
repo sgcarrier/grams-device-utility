@@ -242,11 +242,16 @@ class TCA9539:
     def __getitem__(self, key):
         return self.__dict__[key]
 
-"""
-This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
-a read or write operation, depending on what is available
-"""
+
 class Command():
+    """
+    This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
+    a read or write operation, depending on what is available.
+    For example:
+       > d = Device()
+       > d.register_name(0)  # read operation of the device number 0
+       > d.register_name(0, 1) # writing 1 to the device 0
+    """
     def __init__(self, d, name="", acc=None):
         self.__dict__ = {}
         self._name = name
