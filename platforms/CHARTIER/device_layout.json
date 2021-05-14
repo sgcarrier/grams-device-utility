@@ -4,11 +4,11 @@
       "ADDRESS_INFO": [
         {
           "path": "/dev/spidev3.0",
-          "mode": 2
+          "mode": 1
         },
         {
           "path": "/dev/spidev3.1",
-          "mode": 2
+          "mode": 1
         }
       ],
       "independent": false
@@ -127,11 +127,11 @@
     "TMP1075": {
       "ADDRESS_INFO": [
         {
-          "ch": 16,
+          "ch": 17,
           "addr": 72
         },
         {
-          "ch": 16,
+          "ch": 17,
           "addr": 73
         }
       ],
