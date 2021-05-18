@@ -281,7 +281,7 @@ class ICYSHSR1:
             if value != 2:
                 self.previousOutputMuxValue = value
         elif((paramInfo['addr'] == 1) and (paramInfo['loc'] == 16)):
-            self.currentPP = value
+            self.currentPP = (value >> 16)
         return value
 
     def selftest(self, devNum):
