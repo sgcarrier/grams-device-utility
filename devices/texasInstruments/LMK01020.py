@@ -73,12 +73,10 @@ class LMK01020:
         "EN_CLKOUT_GLOBAL": { "addr": 14, "loc": 27, "mask":  0x8000000, "min": 0, "max":   1, "info": "Test"},  #EN_CLKOUT_GLOBAL,
                "POWERDOWN": { "addr": 14, "loc": 26, "mask":  0x4000000, "min": 0, "max":   1, "info": "Test"}  #POWERDOWN,
 }
-    __slots__ = REGISTERS_INFO.keys()
     ADDRESS_INFO = []
     GPIO_PINS = []
-    __doc__ += "\n"
-    for key, value in REGISTERS_INFO.items():
-        __doc__ += ":ivar {0}: {1} \n".format(key, value["info"])
+
+
 
 
 
@@ -93,8 +91,8 @@ class LMK01020:
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
-            value.__doc__ = value["info"]
-            setattr(self, key, value)
+            self.__dict__[key] = value
+
 
 
         ''' Since the LMK01020 is write-only, we keep a local copy of registers '''
