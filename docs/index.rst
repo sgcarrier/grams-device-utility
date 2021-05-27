@@ -12,10 +12,18 @@ Welcome to grams-device-utility's documentation!
 
 
 
+.. autoclass:: devices.texasInstruments.LMK01020.LMK01020
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+
+
+
 Indices and tables
 ==================
-   Install
-   Support
 
 * :ref:`genindex`
 * :ref:`modindex`

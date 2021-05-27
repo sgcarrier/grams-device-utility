@@ -10,65 +10,77 @@ class LMK01020:
         The LMK01020 is a write-only device that communicates via SPI (uwire)
 
         User Notes:
+
         - The default used clock is CLK1, change it with CLKIN_SELECT
+
         - The Clock division is actually 2x what you put in CLKoutX_DIV
+
         - Toggle SYNC pin at least once (low-High)
+
         - Don't forget the GOE pin for output
+
     """
+
+
     DEVICE_NAME = "LMK01020"
 
     ''' All register info concerning all LMK01020 parameters '''
     REGISTERS_INFO = {
         #  if min=max=0, read-only, min=max=1 Self-clearing)
-                   "RESET": { "addr":  0, "loc": 31, "mask": 0x80000000, "min": 0, "max":   1},  # RESET,
-             "CLKOUT0_MUX": { "addr":  0, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT0_MUX,
-              "CLKOUT0_EN": { "addr":  0, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #CLKOUT0_EN,
-             "CLKOUT0_DIV": { "addr":  0, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255},  #CLKOUT0_DIV,
-             "CLKOUT0_DLY": { "addr":  0, "loc":  4, "mask":       0xF0, "min": 0, "max":  15},  #CLKOUT0_DLY,
+                   "RESET": { "addr":  0, "loc": 31, "mask": 0x80000000, "min": 0, "max":   1, "info": "Test"},  # RESET,
+             "CLKOUT0_MUX": { "addr":  0, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT0_MUX,
+              "CLKOUT0_EN": { "addr":  0, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #CLKOUT0_EN,
+             "CLKOUT0_DIV": { "addr":  0, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"},  #CLKOUT0_DIV,
+             "CLKOUT0_DLY": { "addr":  0, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"},  #CLKOUT0_DLY,
 
-             "CLKOUT1_MUX": { "addr":  1, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT1_MUX,
-              "CLKOUT1_EN": { "addr":  1, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #CLKOUT1_EN,
-             "CLKOUT1_DIV": { "addr":  1, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255},  #CLKOUT1_DIV,
-             "CLKOUT1_DLY": { "addr":  1, "loc":  4, "mask":       0xF0, "min": 0, "max":  15},  #CLKOUT1_DLY,
+             "CLKOUT1_MUX": { "addr":  1, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT1_MUX,
+              "CLKOUT1_EN": { "addr":  1, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #CLKOUT1_EN,
+             "CLKOUT1_DIV": { "addr":  1, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"},  #CLKOUT1_DIV,
+             "CLKOUT1_DLY": { "addr":  1, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"},  #CLKOUT1_DLY,
 
-             "CLKOUT2_MUX": { "addr":  2, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT2_MUX,
-              "CLKOUT2_EN": { "addr":  2, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #CLKOUT2_EN,
-             "CLKOUT2_DIV": { "addr":  2, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255},  #CLKOUT2_DIV,
-             "CLKOUT2_DLY": { "addr":  2, "loc":  4, "mask":       0xF0, "min": 0, "max":  15},  #CLKOUT2_DLY,
+             "CLKOUT2_MUX": { "addr":  2, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT2_MUX,
+              "CLKOUT2_EN": { "addr":  2, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #CLKOUT2_EN,
+             "CLKOUT2_DIV": { "addr":  2, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"},  #CLKOUT2_DIV,
+             "CLKOUT2_DLY": { "addr":  2, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"},  #CLKOUT2_DLY,
 
-             "CLKOUT3_MUX": { "addr":  3, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT3_MUX,
-              "CLKOUT3_EN": { "addr":  3, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #CLKOUT3_EN,
-             "CLKOUT3_DIV": { "addr":  3, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255},  #CLKOUT3_DIV,
-             "CLKOUT3_DLY": { "addr":  3, "loc":  4, "mask":       0xF0, "min": 0, "max":  15},  #CLKOUT3_DLY,
+             "CLKOUT3_MUX": { "addr":  3, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT3_MUX,
+              "CLKOUT3_EN": { "addr":  3, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #CLKOUT3_EN,
+             "CLKOUT3_DIV": { "addr":  3, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"},  #CLKOUT3_DIV,
+             "CLKOUT3_DLY": { "addr":  3, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"},  #CLKOUT3_DLY,
 
-             "CLKOUT4_MUX": { "addr":  4, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT4_MUX,
-              "CLKOUT4_EN": { "addr":  4, "loc": 16, "mask":    0x10000, "min": 0, "max":   1}, #CLKOUT4_EN,
-             "CLKOUT4_DIV": { "addr":  4, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255},  #CLKOUT4_DIV,
-             "CLKOUT4_DLY": { "addr":  4, "loc":  4, "mask":       0xF0, "min": 0, "max":  15},  #CLKOUT4_DLY,
+             "CLKOUT4_MUX": { "addr":  4, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT4_MUX,
+              "CLKOUT4_EN": { "addr":  4, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"}, #CLKOUT4_EN,
+             "CLKOUT4_DIV": { "addr":  4, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"},  #CLKOUT4_DIV,
+             "CLKOUT4_DLY": { "addr":  4, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"},  #CLKOUT4_DLY,
 
-             "CLKOUT5_MUX": { "addr":  5, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT5_MUX,
-              "CLKOUT5_EN": { "addr":  5, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #CLKOUT5_EN,
-             "CLKOUT5_DIV": { "addr":  5, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255},  #CLKOUT5_DIV,
-             "CLKOUT5_DLY": { "addr":  5, "loc":  4, "mask":       0xF0, "min": 0, "max":  15},  #CLKOUT5_DLY,
+             "CLKOUT5_MUX": { "addr":  5, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT5_MUX,
+              "CLKOUT5_EN": { "addr":  5, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #CLKOUT5_EN,
+             "CLKOUT5_DIV": { "addr":  5, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"},  #CLKOUT5_DIV,
+             "CLKOUT5_DLY": { "addr":  5, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"},  #CLKOUT5_DLY,
 
-             "CLKOUT6_MUX": { "addr":  6, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT6_MUX,
-              "CLKOUT6_EN": { "addr":  6, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #CLKOUT6_EN,
-             "CLKOUT6_DIV": { "addr":  6, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255},  #CLKOUT6_DIV,
-             "CLKOUT6_DLY": { "addr":  6, "loc":  4, "mask":       0xF0, "min": 0, "max":  15}, #CLKOUT6_DLY,
+             "CLKOUT6_MUX": { "addr":  6, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT6_MUX,
+              "CLKOUT6_EN": { "addr":  6, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #CLKOUT6_EN,
+             "CLKOUT6_DIV": { "addr":  6, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"},  #CLKOUT6_DIV,
+             "CLKOUT6_DLY": { "addr":  6, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"}, #CLKOUT6_DLY,
 
-             "CLKOUT7_MUX": { "addr":  7, "loc": 17, "mask":    0x60000, "min": 0, "max":   3},  #CLKOUT7_MUX,
-              "CLKOUT7_EN": { "addr":  7, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #CLKOUT7_EN,
-             "CLKOUT7_DIV": { "addr":  7, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255}, #CLKOUT7_DIV,
-             "CLKOUT7_DLY": { "addr":  7, "loc":  4, "mask":       0xF0, "min": 0, "max":  15},  #CLKOUT7_DLY,
+             "CLKOUT7_MUX": { "addr":  7, "loc": 17, "mask":    0x60000, "min": 0, "max":   3, "info": "Test"},  #CLKOUT7_MUX,
+              "CLKOUT7_EN": { "addr":  7, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #CLKOUT7_EN,
+             "CLKOUT7_DIV": { "addr":  7, "loc":  8, "mask":     0xFF00, "min": 0, "max": 255, "info": "Test"}, #CLKOUT7_DIV,
+             "CLKOUT7_DLY": { "addr":  7, "loc":  4, "mask":       0xF0, "min": 0, "max":  15, "info": "Test"},  #CLKOUT7_DLY,
 
-                  "VBOOST": { "addr":  9, "loc": 16, "mask":    0x10000, "min": 0, "max":   1},  #VBOOST,
-            "CLKIN_SELECT": { "addr": 14, "loc": 29, "mask": 0x20000000, "min": 0, "max":   1},  #CLKIN_SELECT,
-        "EN_CLKOUT_GLOBAL": { "addr": 14, "loc": 27, "mask":  0x8000000, "min": 0, "max":   1},  #EN_CLKOUT_GLOBAL,
-               "POWERDOWN": { "addr": 14, "loc": 26, "mask":  0x4000000, "min": 0, "max":   1}  #POWERDOWN,
+                  "VBOOST": { "addr":  9, "loc": 16, "mask":    0x10000, "min": 0, "max":   1, "info": "Test"},  #VBOOST,
+            "CLKIN_SELECT": { "addr": 14, "loc": 29, "mask": 0x20000000, "min": 0, "max":   1, "info": "Test"},  #CLKIN_SELECT,
+        "EN_CLKOUT_GLOBAL": { "addr": 14, "loc": 27, "mask":  0x8000000, "min": 0, "max":   1, "info": "Test"},  #EN_CLKOUT_GLOBAL,
+               "POWERDOWN": { "addr": 14, "loc": 26, "mask":  0x4000000, "min": 0, "max":   1, "info": "Test"}  #POWERDOWN,
 }
-
+    __slots__ = REGISTERS_INFO.keys()
     ADDRESS_INFO = []
     GPIO_PINS = []
+    __doc__ += "\n"
+    for key, value in REGISTERS_INFO.items():
+        __doc__ += ":ivar {0}: {1} \n".format(key, value["info"])
+
+
 
     def __init__(self, path=None, mode=None, name="LMK01020"):
         self.__dict__ = {}
@@ -81,7 +93,9 @@ class LMK01020:
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
-            self.__dict__[key] = value
+            value.__doc__ = value["info"]
+            setattr(self, key, value)
+
 
         ''' Since the LMK01020 is write-only, we keep a local copy of registers '''
         self.LMK01020CurParams = [0] * 15
@@ -219,16 +233,18 @@ class Command:
     """
     This class allows us to use all registers as attributes. Calling the registers with different number of arguments calls
     a read or write operation, depending on what is available.
+
     For example:
-       > d = Device()
-       > d.register_name(0)  # read operation of the device number 0
-       > d.register_name(0, 1) # writing 1 to the device 0
+    > d = Device()
+    > d.register_name(0)  # read operation of the device number 0
+    > d.register_name(0, 1) # writing 1 to the device 0
     """
 
     def __init__(self, d, name="", acc=None):
         self.__dict__ = {}
         self._name = name
         self._acc = acc
+        self.__doc__ = d["info"]
 
     def __call__(self, *args):
         if len(args) == 2:
