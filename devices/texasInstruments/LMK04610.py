@@ -474,6 +474,20 @@ class LMK04610:
 
         self.LMK04610CurParams = [0] * 155
 
+
+    def setup(self):
+        """
+        The functions that must be run before anything is done on the line.
+        In this case: Toggle the RESET HIGH-LOW-HIGH
+        :return: None
+        """
+        for i in range(len(self.GPIO_PINS)):
+            self.gpio_set(i, "RESET", True)
+            time.sleep(0.5)
+            self.gpio_set(i, "RESET", False)
+            time.sleep(0.5)
+            self.gpio_set(i, "RESET", True)
+
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})
         _logger.debug("Added LMK04610 device with path: " + str(channel) + " and mode: " + str(address))
