@@ -33,7 +33,7 @@ class LMK04610:
                             "DEVID": { "addr":   0x03, "loc":  6, "mask":   0xC0, "regs": 1, "min": 0, "max":   0},  # DEVID,
                            "CHIPID": { "addr":   0x04, "loc":  0, "mask": 0xFFFF, "regs": 2, "min": 0, "max":   0},  #CHIPID,
                           "CHIPVER": { "addr":   0x06, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":   0},  # CHIPVER,
-                         "VENDORID": { "addr":   0x0C, "loc":  0, "mask":   0xFF, "regs": 1, "min": 0, "max":   0},  # VENDORID,
+                         "VENDORID": { "addr":   0x0C, "loc":  0, "mask": 0xFFFF, "regs": 2, "min": 0, "max":   0},  # VENDORID,
                            "PLL1EN": { "addr":   0x10, "loc":  0, "mask":   0x01, "regs": 1, "min": 0, "max":   1},  # PLL1EN,
                            "PLL2EN": { "addr":   0x10, "loc":  1, "mask":   0x02, "regs": 1, "min": 0, "max":   1},  # PLL2EN,
                          "CH1TO5EN": { "addr":   0x10, "loc":  2, "mask":   0x04, "regs": 1, "min": 0, "max":   1},  # CH1TO5EN,
@@ -500,22 +500,27 @@ class LMK04610:
         spi_mode = self.ADDRESS_INFO[devNum]["mode"]
 
         totalResponse = 0
+
         try:
-            with SPI(spi_path, spi_mode, 1000000) as spi:
-                # Dont forget to convert to big endian!
-                for r in range(paramInfo['regs']):
-                    valueToSend = (paramInfo['addr']+r)
-                    valueToSend += 1 << 15
-                    writeBuf = self.int_to_short_list(valueToSend, fixed_length=2)
-                    response = spi.transfer(writeBuf)
-                    response = int.from_bytes(response, byteorder='big', signed=False)
-                    totalResponse += (response << (8 * r))
+
+            bus = SPI(spi_path, spi_mode, 2000000, bit_order='msb')
+            # Dont forget to convert to big endian!
+            for r in range(paramInfo['regs']):
+                writeBuf = [0, 0, 0]
+                writeBuf[1] = (paramInfo['addr'] + r)
+                writeBuf[0] = 0x80
+                _logger.debug("Sending: " + str(writeBuf))
+                response = bus.transfer(writeBuf)
+                _logger.debug("Received:" + str(response))
+                totalResponse = (totalResponse << 8) + response[-1]
+            bus.close()
+
+            totalResponse &= paramInfo['mask']
+            totalResponse >>= paramInfo['loc']
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)
             return -1
-
-        self.LMK04610CurParams[paramInfo['addr']] = totalResponse
 
         time.sleep(0.01)
         return totalResponse
@@ -559,17 +564,23 @@ class LMK04610:
         value &= paramInfo["mask"]
         value = self.register_exceptions(paramInfo, value)
 
-        self.LMK04610CurParams[paramInfo['addr']] = (~paramInfo['mask'] & self.LMK01020CurParams[paramInfo['addr']]) | value
-
         try:
-            with SPI(spi_path, spi_mode, 1000000) as spi:
-                # Dont forget to convert to big endian!
-                for r in range(paramInfo['regs']):
-                    valueToSend = (paramInfo['addr']+r) << 8
-                    valueToSend += ((self.LMK04610CurParams[paramInfo['addr']] >> (r * 8)) & 0xFF)
-                    writeBuf = (valueToSend).to_bytes(3, 'big')
-                    _logger.debug("About to write raw data: " + str(writeBuf))
-                    spi.transfer(writeBuf)
+            curr_val = self.read_param(devNum, paramName)
+
+            bus = SPI(spi_path, spi_mode, 2000000, bit_order='msb')
+            # Dont forget to convert to big endian!
+            for r in range(paramInfo['regs']):
+                writeBuf = [0, 0, 0]
+                writeBuf[0] = (paramInfo['addr'] + r) & 0xFF00
+                writeBuf[1] = (paramInfo['addr'] + r) & 0xFF
+                curr_val_reg = ((curr_val >> (r * 8)) & 0xFF) & (~paramInfo['mask'])
+                writeBuf[2] += curr_val_reg | value
+
+                #writeBuf = (valueToSend).to_bytes(3, 'big')
+                _logger.debug("About to write raw data: " + str(writeBuf))
+                bus.transfer(writeBuf)
+            bus.close()
+
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)
@@ -604,7 +615,14 @@ class LMK04610:
         return value
 
     def selftest(self, devNum):
-        return 1
+        vendorid_val = self.read_param(devNum, "VENDORID")
+
+        if (vendorid_val != 0x5108):
+            _logger.error("Self-test for device on devNum: " + str(devNum) + " failed")
+            _logger.error("Expecting: " + str(0x5108) + ", Received: " + str(vendorid_val))
+            return -1
+
+        return 0
 
     def readout_all_registers(self, devNum):
         _logger.info("==== Device report ====")
