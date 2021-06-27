@@ -13,7 +13,7 @@ class LMK04610:
         User Notes:
         - Toggle the RESET and SYNC pins
         - The STATUS1 pin acts as the SPI output when not in 3-wire (by default, you aren't)
-        -
+        - When reading, send one last 0 byte so that the clock continues to operate for the response
     """
 
     DEVICE_NAME = "LMK04610"
