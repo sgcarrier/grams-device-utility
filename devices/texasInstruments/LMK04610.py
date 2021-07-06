@@ -536,8 +536,6 @@ class LMK04610:
             _logger.error(e)
             return -1
 
-        self.LMK04610CurParams[paramInfo['addr']] = totalResponse
-
         time.sleep(0.01)
         return totalResponse
 
