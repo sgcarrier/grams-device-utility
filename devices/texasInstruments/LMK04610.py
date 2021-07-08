@@ -13,7 +13,7 @@ class LMK04610:
         User Notes:
         - Toggle the RESET and SYNC pins
         - The STATUS1 pin acts as the SPI output when not in 3-wire (by default, you aren't)
-        -
+        - When reading, send one last 0 byte so that the clock continues to operate for the response
     """
 
     DEVICE_NAME = "LMK04610"
@@ -371,7 +371,7 @@ class LMK04610:
                       "HS_EN_CH3_4": { "addr":  0x129, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH3_4,
                     "SYNC_EN_CH3_4": { "addr":  0x129, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH3_4,
 "SYSREF_BYP_ANALOGDLY_GATING_CH3_4": { "addr":  0x129, "loc":  6, "mask":   0x40, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_ANALOGDLY_GATING_CH3_4,
-"SYSREF_BYP_DYNDIGDLY_GATING_CH4_4": { "addr":  0x129, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH3_4,
+"SYSREF_BYP_DYNDIGDLY_GATING_CH3_4": { "addr":  0x129, "loc":  7, "mask":   0x80, "regs": 1, "min": 0, "max":     1},  # SYSREF_BYP_DYNDIGDLY_GATING_CH3_4,
                       "DRIV_5_SLEW": { "addr":  0x12A, "loc":  0, "mask":   0x03, "regs": 1, "min": 0, "max":      3},  # DRIV_5_SLEW,
                         "HS_EN_CH5": { "addr":  0x12A, "loc":  4, "mask":   0x10, "regs": 1, "min": 0, "max":     1},  # HS_EN_CH5,
                       "SYNC_EN_CH5": { "addr":  0x12A, "loc":  5, "mask":   0x20, "regs": 1, "min": 0, "max":     1},  # SYNC_EN_CH5,
