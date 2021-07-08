@@ -121,7 +121,8 @@
         "WIND_GOE"    : 401,
         "WIND_SYNC"   : 399,
         "TRIG_GOE"    : 402,
-        "TRIG_SYNC"   : 400
+        "TRIG_SYNC"   : 400,
+        "DUAL_SYNC"   : 425
       }]
     },
     "TMP1075": {
@@ -168,7 +169,8 @@
         "FMC_CLOCK_SYNTH_SYNC"      : 420,
         "SHORT_FRAME"               : 421,
         "MUX_COMM_SELECT"           : 423,
-        "EN_COMM_COUNTER"           : 424
+        "EN_COMM_COUNTER"           : 424,
+        "DUAL_DIV_SYNC"             : 425
       }]
     },
     "LED": {
