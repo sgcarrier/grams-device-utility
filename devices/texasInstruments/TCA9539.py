@@ -31,7 +31,7 @@ class TCA9539:
     ADDRESS_INFO = []
     GPIO_PINS = []
 
-    def __init__(self, i2c_ch=None, i2c_addr=None, name="TCA9539"):
+    def __init__(self, i2c_ch=None, i2c_addr=None, name="TCA9539", accessor=None):
         self.__dict__ = {}
         self._name = name
         if i2c_ch and i2c_addr:

@@ -14,7 +14,7 @@ class GEN_GPIO:
 
 
 
-    def __init__(self, name="GEN_GPIO"):
+    def __init__(self, name="GEN_GPIO", accessor=None):
         self.__dict__ = {}
         self._name = name
         #self.from_dict_plat()

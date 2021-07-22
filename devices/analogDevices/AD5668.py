@@ -36,7 +36,7 @@ class AD5668:
     ADDRESS_INFO = []
     GPIO_PINS = {}
 
-    def __init__(self, path=None, mode=None, name="AD5668"):
+    def __init__(self, path=None, mode=None, name="AD5668", accessor=None):
         self.__dict__ = {}
         self._name = name
 

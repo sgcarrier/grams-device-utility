@@ -3,18 +3,21 @@ from pkg_resources import resource_filename
 import importlib
 import logging
 import sys, time, os
+from devices.remoteAccessor import RemoteAccessor
 
 _logger = logging.getLogger(__name__)
 
 
 class CHARTIER():
 
-    def __init__(self, layoutFile=None, name="CHARTIER", logPath="log/"):
+    def __init__(self, layoutFile=None, name="CHARTIER", logPath="log/", remoteIP=None):
         if layoutFile is None:
             layoutFile = resource_filename(__name__, 'device_layout.json')
 
         with open(layoutFile, 'r') as f:
             self.layout = json.load(f)
+
+        self.remoteIP = remoteIP
 
         self._name = name
         self.from_dict_layout(self.layout)
@@ -29,7 +32,10 @@ class CHARTIER():
                 # independent here means that there is local data to be maintained for each device,
                 # so all instances should be separate
                 if attr['independent'] == False:
-                    self.__dict__[devName] = devClass()
+                    if self.remoteIP:
+                        self.__dict__[devName] = devClass(accessor=RemoteAccessor(boardName=self._name, deviceName=devName, ip="192.168.1.10"))
+                    else:
+                        self.__dict__[devName] = devClass()
                     if "ADDRESS_INFO" in attr:
                         self.__dict__[devName].ADDRESS_INFO = attr["ADDRESS_INFO"]
                     if "GPIO_PINS" in attr:

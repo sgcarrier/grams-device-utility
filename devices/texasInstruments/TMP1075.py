@@ -33,21 +33,24 @@ class TMP1075:
     ADDRESS_INFO = []
     GPIO_PINS = []
 
-    def __init__(self, i2c_ch=None, i2c_addr=None, name="TMP1075"):
+    def __init__(self, i2c_ch=None, i2c_addr=None, name="TMP1075", accessor=None):
         self.__dict__ = {}
         self._name = name
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
             _logger.debug("Instantiated TMP1075 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
 
+        if (accessor == None):
+            accessor = self
 
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = Command(value, str(key), accessor)
             self.__dict__[key] = value
 
         '''Extra commands'''
-        self.__dict__["GPIO"] = Command(value, str(key), self)
+        self.__dict__["GPIO"] = Command(None, "GPIO", accessor)
+        self.__dict__["SELFTEST"] = Command(None, "SELFTEST", accessor)
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
@@ -264,17 +267,26 @@ class Command():
 
     def __call__(self, *args):
         if (self._name == "GPIO"):
-            self._acc.set_gpio(args[0],args[1])
+            if len(args) == 3:
+                self._acc.gpio_set(args[0], args[1], args[2])
+            else:
+                _logger.error("Incorrect number of arguments. Ignoring")
+                return -1
 
         if (self._name == "SELFTEST"):
-            self._acc.selftest(args[0])
+            if len(args) == 1:
+                self._acc.selftest(args[0])
+            else:
+                _logger.error("Incorrect number of arguments. Ignoring")
+                return -1
 
         if len(args) == 2:
             self._acc.write_param(args[0], self._name, args[1])
         elif len(args) == 1:
             return self._acc.read_param(args[0], self._name)
         else:
-            _logger.warning("Incorrect number of arguments. Ignoring")
+            _logger.error("Incorrect number of arguments. Ignoring")
+            return -1
 
         time.sleep(0.01)
 
@@ -288,24 +300,24 @@ class Command():
         return self.__dict__[key]
 
 
-class RemoteAccessor():
-
-    def __init__(self, ip="192.168.1.10", port=5000, timeout=None):
-        self.IP = ip
-        self.port = port
-        self._url = "http://" + str(self.IP) + ":" + str(port)
-        self.timeout = timeout
-
-    def write_param(self, **kwargs):
-        msg = self._url + str(element)
-        response = requests.get(str(msg), params=data, timeout=self.timeout)
-
-    def read_param(self, **kwargs):
-        pass
-
-    def set_gpio(self, **kwargs):
-        pass
-
-    def selftest(self, **kwargs):
-        pass
+# class RemoteAccessor():
+#
+#     def __init__(self, ip="192.168.1.10", port=5000, timeout=None):
+#         self.IP = ip
+#         self.port = port
+#         self._url = "http://" + str(self.IP) + ":" + str(port)
+#         self.timeout = timeout
+#
+#     def write_param(self, **kwargs):
+#         msg = self._url + str(element)
+#         response = requests.get(str(msg), params=data, timeout=self.timeout)
+#
+#     def read_param(self, **kwargs):
+#         pass
+#
+#     def set_gpio(self, **kwargs):
+#         pass
+#
+#     def selftest(self, **kwargs):
+#         pass
 

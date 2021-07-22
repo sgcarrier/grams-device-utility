@@ -8,7 +8,7 @@ class MUX:
     DEVICE_NAME = "MUX"
     GPIO_PINS = {}
 
-    def __init__(self, gpio_pins=None, name="MUX"):
+    def __init__(self, gpio_pins=None, name="MUX", accessor=None):
         self._name = name
         self.__dict__ = {}
         if gpio_pins and isinstance(gpio_pins, dict):

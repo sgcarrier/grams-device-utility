@@ -15,7 +15,7 @@ class DIP:
     GPIO_PINS = {}
 
 
-    def __init__(self, name="DIP"):
+    def __init__(self, name="DIP", accessor=None):
         self.__dict__ = {}
         self._name = name
 

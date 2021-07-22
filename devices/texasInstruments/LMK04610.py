@@ -459,7 +459,7 @@ class LMK04610:
     ADDRESS_INFO = []
     GPIO_PINS = []
 
-    def __init__(self, path=None, mode=None, name="LMK04610"):
+    def __init__(self, path=None, mode=None, name="LMK04610", accessor=None):
         self.__dict__ = {}
         self._name = name
 
