@@ -40,11 +40,14 @@ class TMP1075:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
             _logger.debug("Instantiated TMP1075 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
 
+
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
             value = Command(value, str(key), self)
             self.__dict__[key] = value
 
+        '''Extra commands'''
+        self.__dict__["GPIO"] = Command(value, str(key), self)
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})
@@ -260,6 +263,12 @@ class Command():
         self._acc = acc
 
     def __call__(self, *args):
+        if (self._name == "GPIO"):
+            self._acc.set_gpio(args[0],args[1])
+
+        if (self._name == "SELFTEST"):
+            self._acc.selftest(args[0])
+
         if len(args) == 2:
             self._acc.write_param(args[0], self._name, args[1])
         elif len(args) == 1:
@@ -277,4 +286,26 @@ class Command():
 
     def __getitem__(self, key):
         return self.__dict__[key]
+
+
+class RemoteAccessor():
+
+    def __init__(self, ip="192.168.1.10", port=5000, timeout=None):
+        self.IP = ip
+        self.port = port
+        self._url = "http://" + str(self.IP) + ":" + str(port)
+        self.timeout = timeout
+
+    def write_param(self, **kwargs):
+        msg = self._url + str(element)
+        response = requests.get(str(msg), params=data, timeout=self.timeout)
+
+    def read_param(self, **kwargs):
+        pass
+
+    def set_gpio(self, **kwargs):
+        pass
+
+    def selftest(self, **kwargs):
+        pass
 
