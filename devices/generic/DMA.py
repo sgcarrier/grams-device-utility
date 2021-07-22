@@ -24,19 +24,20 @@ class DMA:
         return self.clib.get_current_samples()
 
 
-    def start_data_acquisition(self, acqId, maxSamples=-1, maxTime=-1, maxEmptyTimeout=-1):
+    def start_data_acquisition(self, headNum, acqId, maxSamples=-1, maxTime=-1, maxEmptyTimeout=-1):
         _logger.info("Starting acquisition with multicast")
 
         #The following line is blocking
-        ret = self.clib.start_acquisition_multicast(c_int(maxSamples), c_int(maxTime), c_int(acqId), c_int(maxEmptyTimeout))
+        ret = self.clib.start_acquisition_multicast(c_short(headNum), c_int(maxSamples), c_int(maxTime), c_int(acqId), c_int(maxEmptyTimeout))
 
         if ret != 0:
             _logger.error("Acquisition ended with an error...")
 
-    def start_data_acquisition_HDF(self, filename, groupName, datasetName, maxSamples, maxEmptyTimeout=-1, type=1, compression=0):
+    def start_data_acquisition_HDF(self, headNum, filename, groupName, datasetName, maxSamples, maxEmptyTimeout=-1, type=1, compression=0):
         _logger.info("Starting acquisition with HDF5 file")
 
-        ret = self.clib.start_acquisition_hdf5(c_char_p(filename.encode('utf-8')),
+        ret = self.clib.start_acquisition_hdf5(c_short(headNum),
+                                               c_char_p(filename.encode('utf-8')),
                                                c_char_p(groupName.encode('utf-8')),
                                                c_char_p(datasetName.encode('utf-8')),
                                                c_int64(maxSamples),
