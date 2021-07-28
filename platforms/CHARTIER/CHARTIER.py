@@ -2,6 +2,7 @@ import json
 from pkg_resources import resource_filename
 import importlib
 import logging
+from devices.remoteCommand import *
 import sys, time, os
 
 _logger = logging.getLogger(__name__)
@@ -9,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class CHARTIER():
 
-    def __init__(self, layoutFile=None, name="CHARTIER", logPath="log/"):
+    def __init__(self, layoutFile=None, name="CHARTIER", logPath="log/", remoteIP=None):
         if layoutFile is None:
             layoutFile = resource_filename(__name__, 'device_layout.json')
 
@@ -17,11 +18,18 @@ class CHARTIER():
             self.layout = json.load(f)
 
         self._name = name
+        self._remoteIP = remoteIP
         self.from_dict_layout(self.layout)
         _logger.info(self.layout2Report(self.layout, name))
 
 
     def from_dict_layout(self, d):
+
+        if self._remoteIP:
+            cmdClass = partialCommand(RemoteCommand, ip=self._remoteIP, port=5000, timeout=None)
+        else:
+            cmdClass = None
+
         for manu, dev in d.items():
             for devName, attr in dev.items():
                 moduleName = "devices." + manu + "." + devName
@@ -29,7 +37,7 @@ class CHARTIER():
                 # independent here means that there is local data to be maintained for each device,
                 # so all instances should be separate
                 if attr['independent'] == False:
-                    self.__dict__[devName] = devClass()
+                    self.__dict__[devName] = devClass(cmdClass=cmdClass)
                     if "ADDRESS_INFO" in attr:
                         self.__dict__[devName].ADDRESS_INFO = attr["ADDRESS_INFO"]
                     if "GPIO_PINS" in attr:
@@ -41,7 +49,7 @@ class CHARTIER():
                     num = 0
                     if "ADDRESS_INFO" in attr:
                         for addr_info in attr["ADDRESS_INFO"]:
-                            self.__dict__[devName+"_"+str(num)] = devClass()
+                            self.__dict__[devName+"_"+str(num)] = devClass(cmdClass=cmdClass)
                             self.__dict__[devName+"_"+str(num)].ADDRESS_INFO = addr_info
                             self.__dict__[devName + "_" + str(num)].DEVICE_NAME = devName+"_"+str(num)
                             num += 1
@@ -153,6 +161,6 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     root.addHandler(handler)
 
-    b = CHARTIER()
+    b = CHARTIER(remoteIP="127.0.0.1")
 
     test = b.LMK03318.LOL()

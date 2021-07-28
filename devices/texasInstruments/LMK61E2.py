@@ -63,17 +63,23 @@ class LMK61E2:
     ADDRESS_INFO = []
     GPIO_PINS = {}
 
-    def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK61E2"):
+    def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK61E2", cmdClass=None):
         self.__dict__ = {}
         self._name = name
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
             _logger.debug("Instantiated LMK61E2 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
 
+        if cmdClass == None:
+            cmdClass = Command
+
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = cmdClass(value, str(key), self)
             self.__dict__[key] = value
+
+        '''Extra commands'''
+        self.__dict__["GPIO"] = cmdClass(self.GPIO_PINS, "GPIO", self)
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'ch': channel, 'addr': address})

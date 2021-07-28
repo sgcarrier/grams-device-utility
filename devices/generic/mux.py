@@ -8,7 +8,7 @@ class MUX:
     DEVICE_NAME = "MUX"
     GPIO_PINS = {}
 
-    def __init__(self, gpio_pins=None, name="MUX"):
+    def __init__(self, gpio_pins=None, name="MUX", cmdClass=None):
         self._name = name
         self.__dict__ = {}
         if gpio_pins and isinstance(gpio_pins, dict):
@@ -16,13 +16,16 @@ class MUX:
             self._PIN_CONFIG = [0] * len(gpio_pins)
         else:
             self._PIN_CONFIG = []
-        self.from_dict_plat()
 
+        if cmdClass == None:
+            cmdClass = Command
 
-    def from_dict_plat(self):
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = cmdClass(value, str(key), self)
             self.__dict__[key] = value
+
+        self.__dict__["GPIO"] = cmdClass(self.GPIO_PINS, "GPIO", self)
+
 
     def register_pin(self, name, pinNum):
         self.GPIO_PINS[name] = pinNum

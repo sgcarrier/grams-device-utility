@@ -36,17 +36,22 @@ class AD5668:
     ADDRESS_INFO = []
     GPIO_PINS = {}
 
-    def __init__(self, path=None, mode=None, name="AD5668"):
+    def __init__(self, path=None, mode=None, name="AD5668", cmdClass=None):
         self.__dict__ = {}
         self._name = name
 
         if path and mode:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
 
+        if cmdClass == None:
+            cmdClass = Command
+
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = cmdClass(value, str(key), self)
             self.__dict__[key] = value
+
+        self.__dict__["GPIO"] = cmdClass(self.GPIO_PINS, "GPIO", self)
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})

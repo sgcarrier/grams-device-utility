@@ -459,7 +459,7 @@ class LMK04610:
     ADDRESS_INFO = []
     GPIO_PINS = []
 
-    def __init__(self, path=None, mode=None, name="LMK04610"):
+    def __init__(self, path=None, mode=None, name="LMK04610", cmdClass=None):
         self.__dict__ = {}
         self._name = name
 
@@ -467,12 +467,18 @@ class LMK04610:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
             _logger.debug("Instantiated LMK04610 device with path: " + str(path) + " and mode: " + str(mode))
 
+        if cmdClass == None:
+            cmdClass = Command
+
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = cmdClass(value, str(key), self)
             self.__dict__[key] = value
 
         self.LMK04610CurParams = [0] * 155
+
+        '''Extra commands'''
+        self.__dict__["GPIO"] = cmdClass(self.GPIO_PINS, "GPIO", self)
 
 
     def setup(self):
@@ -482,11 +488,11 @@ class LMK04610:
         :return: None
         """
         for i in range(len(self.GPIO_PINS)):
-            self.gpio_set(i, "RESET", True)
+            self.GPIO(i, "RESET", True)
             time.sleep(0.5)
-            self.gpio_set(i, "RESET", False)
+            self.GPIO(i, "RESET", False)
             time.sleep(0.5)
-            self.gpio_set(i, "RESET", True)
+            self.GPIO(i, "RESET", True)
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})

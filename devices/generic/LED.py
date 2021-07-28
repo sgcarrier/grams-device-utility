@@ -15,7 +15,7 @@ class LED:
     GPIO_PINS = {}
 
 
-    def __init__(self, name="LED"):
+    def __init__(self, name="LED", cmdClass=None):
         self.__dict__ = {}
         self._name = name
 

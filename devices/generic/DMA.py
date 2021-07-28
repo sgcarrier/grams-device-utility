@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class DMA:
 
-    def __init__(self):
+    def __init__(self, cmdClass=None):
         try:
             self.clib = ctypes.CDLL("/usr/lib/dma-consumer.so")
         except Exception as e:

@@ -210,17 +210,23 @@ class LMK03318:
     ADDRESS_INFO = []
     GPIO_PINS = []
 
-    def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK03318"):
+    def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK03318", cmdClass=None):
         self.__dict__ = {}
         self._name = name
         if i2c_ch and i2c_addr:
             self.ADDRESS_INFO.append({'ch': i2c_ch, 'addr': i2c_addr})
             _logger.debug("Instantiated LMK03318 device with ch: " + str(i2c_ch) + " and addr: " + str(i2c_addr))
 
+        if cmdClass == None:
+            cmdClass = Command
+
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = cmdClass(value, str(key), self)
             self.__dict__[key] = value
+
+        '''Extra commands'''
+        self.__dict__["GPIO"] = cmdClass(self.GPIO_PINS, "GPIO", self)
 
     def setup(self):
         """
@@ -229,15 +235,15 @@ class LMK03318:
         :return: None
         """
         for i in range(len(self.GPIO_PINS)):
-            self.gpio_set(i, "CFGSEL0", False)
-            self.gpio_set(i, "CFGSEL1", False)
+            self.GPIO(i, "CFGSEL0", False)
+            self.GPIO(i, "CFGSEL1", False)
             time.sleep(0.5)
-            self.gpio_set(i, "CFGSEL0", True)
-            self.gpio_set(i, "CFGSEL1", True)
+            self.GPIO(i, "CFGSEL0", True)
+            self.GPIO(i, "CFGSEL1", True)
             time.sleep(0.5)
-            self.gpio_set(i, "PDN", False)
+            self.GPIO(i, "PDN", False)
             time.sleep(0.5)
-            self.gpio_set(i, "PDN", True)
+            self.GPIO(i, "PDN", True)
 
     def register_device(self, channel, address):
         """

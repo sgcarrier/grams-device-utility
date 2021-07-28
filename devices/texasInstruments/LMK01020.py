@@ -80,7 +80,7 @@ class LMK01020:
 
 
 
-    def __init__(self, path=None, mode=None, name="LMK01020"):
+    def __init__(self, path=None, mode=None, name="LMK01020", cmdClass=None):
         self.__dict__ = {}
         self._name = name
 
@@ -88,9 +88,12 @@ class LMK01020:
             self.ADDRESS_INFO.append({'path': path, 'mode': mode})
             _logger.debug("Instantiated LMK01020 device with path: " + str(path) + " and mode: " + str(mode))
 
+        if cmdClass == None:
+            cmdClass = Command
+
         ''' Populate add all the registers as attributes '''
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = cmdClass(value, str(key), self)
             self.__dict__[key] = value
 
 
@@ -99,6 +102,9 @@ class LMK01020:
         self.LMK01020CurParams = [0] * 15
         self.LMK01020CurParams[9] = 0x22A00
         self.LMK01020CurParams[14] = 0x40000000
+
+        '''Extra commands'''
+        self.__dict__["GPIO"] = cmdClass(self.GPIO_PINS, "GPIO", self)
 
     def register_device(self, channel, address):
         self.ADDRESS_INFO.append({'path': channel, 'mode': address})

@@ -123,7 +123,7 @@ class ICYSHSR1:
     ADDRESS_INFO = []
     GPIO_PINS = {}
 
-    def __init__(self, DLLName="icyshsr1-lib.so", name="ICYSHSR1"):
+    def __init__(self, DLLName="icyshsr1-lib.so", name="ICYSHSR1", cmdClass=None):
         self.__dict__ = {}
         self._name = name
         self.previousOutputMuxValue = 0
@@ -133,12 +133,16 @@ class ICYSHSR1:
         except Exception as e:
             self.libc = None
             _logger.error("Could not find DLL " + str(DLLName) + ". Thus, could not properly create device.")
-        self.from_dict_plat()
 
-    def from_dict_plat(self):
+        if cmdClass == None:
+            cmdClass = Command
+
         for key, value in self.REGISTERS_INFO.items():
-            value = Command(value, str(key), self)
+            value = cmdClass(value, str(key), self)
             self.__dict__[key] = value
+
+        self.__dict__["GPIO"] = cmdClass(self.GPIO_PINS, "GPIO", self)
+
 
     def register_device(self, devNum):
         self.ADDRESS_INFO.append({'devNum': devNum})
