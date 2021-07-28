@@ -38,17 +38,18 @@ class RemoteCommand:
     def __call__(self, *args):
 
         dest = self._url + "/" + str(self._acc._name) + "/" + str(self._name)
+        params = {'args': args}
 
         if (self._name == "GPIO"):
             if len(args) == 3:
-                params = {"devNum": args[0], "name": args[1], "value": args[2]}
+                #params = {"devNum": args[0], "name": args[1], "value": args[2]}
                 r = requests.post(dest, params=params, timeout=self.timeout)
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
 
         if (self._name == "SELFTEST"):
             if len(args) == 1:
-                params = {"devNum": args[0]}
+                #params = {"devNum": args[0]}
                 r = requests.get(dest, params=params, timeout=self.timeout)
                 return json.loads(r.content)['returnValue']
             else:
@@ -57,20 +58,20 @@ class RemoteCommand:
         # TODO find a solution to this exception case
         if (self._acc._name != "ICYSHSR1"):
             if len(args) == 2:
-                params = {"devNum": args[0], "value": args[1]}
+                #params = {"devNum": args[0], "value": args[1]}
                 r = requests.get(dest, params=params, timeout=self.timeout)
                 return json.loads(r.content)['returnValue']
             elif len(args) == 3:
-                params = {"devNum": args[0], "value": args[1], "register_offset": args[2]}
+                #params = {"devNum": args[0], "value": args[1], "register_offset": args[2]}
                 r = requests.post(dest, params=params, timeout=self.timeout)
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
         else:
             if len(args) == 2:
-                params = {"devNum": args[0], "value": args[1]}
+                #params = {"devNum": args[0], "value": args[1]}
                 r = requests.post(dest, params=params, timeout=self.timeout)
             elif len(args) == 1:
-                params = {"devNum": args[0]}
+                #params = {"devNum": args[0]}
                 r = requests.get(dest, params=params, timeout=self.timeout)
                 return json.loads(r.content)['returnValue']
             else:

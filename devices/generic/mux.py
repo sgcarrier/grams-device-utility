@@ -74,10 +74,27 @@ class Command():
 
     def __call__(self, *args):
         try:
+
+            if (self._name == "GPIO"):
+                if len(args) == 3:
+                    return self._acc.gpio_set(args[0], args[1], args[2])
+                else:
+                    _logger.warning("Incorrect number of arguments. Ignoring")
+                    return -1
+
+            if (self._name == "SELFTEST"):
+                if len(args) == 1:
+                    return self._acc.selftest(args[0])
+                else:
+                    _logger.warning("Incorrect number of arguments. Ignoring")
+                    return -1
+
+
             if len(args) == 1:
                 return self._acc.gpio_set(self._name, args[0])
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
+                return -1
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             raise e
