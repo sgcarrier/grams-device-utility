@@ -211,6 +211,7 @@ class LMK03318:
     GPIO_PINS = []
 
     def __init__(self, i2c_ch=None, i2c_addr=None, name="LMK03318", cmdClass=None):
+
         self.__dict__ = {}
         self._name = name
         if i2c_ch and i2c_addr:

@@ -4,6 +4,7 @@ import importlib
 import logging
 from devices.remoteCommand import *
 import sys, time, os
+from devices.remoteAccessor import RemoteAccessor
 
 _logger = logging.getLogger(__name__)
 
@@ -16,6 +17,8 @@ class CHARTIER():
 
         with open(layoutFile, 'r') as f:
             self.layout = json.load(f)
+
+        self.remoteIP = remoteIP
 
         self._name = name
         self._remoteIP = remoteIP
@@ -37,7 +40,14 @@ class CHARTIER():
                 # independent here means that there is local data to be maintained for each device,
                 # so all instances should be separate
                 if attr['independent'] == False:
+<<<<<<< HEAD
                     self.__dict__[devName] = devClass(cmdClass=cmdClass)
+=======
+                    if self.remoteIP:
+                        self.__dict__[devName] = devClass(accessor=RemoteAccessor(boardName=self._name, deviceName=devName, ip="192.168.1.10"))
+                    else:
+                        self.__dict__[devName] = devClass()
+>>>>>>> a133e76c4e69aeb6a84eb8864446c8ee03f24d88
                     if "ADDRESS_INFO" in attr:
                         self.__dict__[devName].ADDRESS_INFO = attr["ADDRESS_INFO"]
                     if "GPIO_PINS" in attr:

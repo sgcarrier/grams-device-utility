@@ -78,8 +78,6 @@ class LMK01020:
 
 
 
-
-
     def __init__(self, path=None, mode=None, name="LMK01020", cmdClass=None):
         self.__dict__ = {}
         self._name = name
