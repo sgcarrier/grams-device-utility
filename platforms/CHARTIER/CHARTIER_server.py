@@ -18,20 +18,37 @@ class CHARTIERHandler(BaseHTTPRequestHandler):
             for path in paths:
                 cmd = getattr(cmd, path)
 
-            cmd(*query['args'])
+            r = cmd(*query['args'])
 
-    # def do_GET(self):
-    #     if self.board:
-    #         parsed_path = urllib.parse.urlsplit(self.path)
-    #         query = urllib.parse.parse_qs(parsed_path.query)
-    #         print(query)
-    #
-    #         paths = (self.path).split('/')
-    #         cmd = self.board
-    #         for path in paths:
-    #             cmd = getattr(cmd, path)
-    #
-    #         cmd(*query['args'])
+            if (r == -1):
+                self.send_response(400)
+            else:
+                self.send_response(200)
+                self.send_header("Content-type", "application/octet-stream")
+                self.end_headers()
+
+    def do_GET(self):
+        if self.board:
+            parsed_path = urllib.parse.urlsplit(self.path)
+            query = urllib.parse.parse_qs(parsed_path.query)
+            print(query)
+
+            paths = (self.path).split('?')[0]
+            paths = paths.split('/')
+            cmd = self.board
+            paths = filter(None, paths)
+            for path in paths:
+                cmd = getattr(cmd, path)
+
+            r = cmd(*query['args'])
+
+            if (r == -1):
+                self.send_response(400)
+            else:
+                self.send_response(200)
+                self.send_header("Content-type", "application/octet-stream")
+                self.end_headers()
+                self.wfile.write(r)
 
 
 
