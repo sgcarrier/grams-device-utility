@@ -44,7 +44,6 @@ class RemoteCommand:
             if len(args) == 3:
                 #params = {"devNum": args[0], "name": args[1], "value": args[2]}
                 r = requests.post(dest, params=params, timeout=self.timeout)
-                return int(json.loads(r.content)['returnValue'])
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
                 return -1
@@ -53,7 +52,6 @@ class RemoteCommand:
             if len(args) == 1:
                 #params = {"devNum": args[0]}
                 r = requests.get(dest, params=params, timeout=self.timeout)
-                return int(json.loads(r.content)['returnValue'])
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
                 return -1
@@ -62,10 +60,8 @@ class RemoteCommand:
         elif (self._acc._name == "ICYSHSR1"):
             if len(args) == 2:
                 r = requests.get(dest, params=params, timeout=self.timeout)
-                return int(json.loads(r.content)['returnValue'])
             elif len(args) == 3:
                 r = requests.post(dest, params=params, timeout=self.timeout)
-                return int(json.loads(r.content)['returnValue'])
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
                 return -1
@@ -73,23 +69,25 @@ class RemoteCommand:
         elif (self._acc._name == "AD5668"):
             if len(args) == 3:
                 r = requests.post(dest, params=params, timeout=self.timeout)
-                return int(json.loads(r.content)['returnValue'])
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
                 return -1
         else:
             if len(args) == 2:
                 r = requests.post(dest, params=params, timeout=self.timeout)
-                return int(json.loads(r.content)['returnValue'])
             elif len(args) == 1:
                 r = requests.get(dest, params=params, timeout=self.timeout)
-                return int(json.loads(r.content)['returnValue'])
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
                 return -1
 
         time.sleep(0.01)
-        return -1
+
+        if json.loads(r.content)['returnValue']:
+            ret = int(json.loads(r.content)['returnValue'])
+        else:
+            ret = -1
+        return ret
 
     def __repr__(self):
         return self._name
