@@ -84,7 +84,7 @@ class RemoteCommand:
         time.sleep(0.01)
 
         if json.loads(r.content)['returnValue']:
-            if json.loads(r.content)['returnValue'] is not None:
+            if json.loads(r.content)['returnValue'] is not "None":
                 ret = int(json.loads(r.content)['returnValue'])
             else:
                 ret = -1
