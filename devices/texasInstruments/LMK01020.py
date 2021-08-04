@@ -266,9 +266,10 @@ class Command:
 
 
         if len(args) == 2:
-            self._acc.write_param(args[0], self._name, args[1])
+            return self._acc.write_param(args[0], self._name, args[1])
         else:
             _logger.warning("Incorrect number of arguments. Ignoring")
+            return -1
 
         time.sleep(0.01)
 

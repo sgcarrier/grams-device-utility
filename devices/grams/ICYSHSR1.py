@@ -389,6 +389,7 @@ class Command():
         except Exception as e:
             _logger.error("Could not set message to device. Check connection...")
             _logger.error(e)
+            return -1
 
         time.sleep(0.01)
 
