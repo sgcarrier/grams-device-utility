@@ -37,7 +37,7 @@ class RemoteCommand:
 
     def __call__(self, *args):
 
-        dest = self._url + "/" + str(self._acc._name) + "/" + str(self._name)
+        dest = self._url + "/CHARTIER/" + str(self._acc._name) + "/" + str(self._name)
         params = {'args': args}
 
         if (self._name == "GPIO"):
