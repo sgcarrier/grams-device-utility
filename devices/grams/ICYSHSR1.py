@@ -132,7 +132,10 @@ class ICYSHSR1:
             self.libc = CDLL(DLLName)
         except Exception as e:
             self.libc = None
-            _logger.error("Could not find DLL " + str(DLLName) + ". Thus, could not properly create device.")
+            if cmdClass:
+                _logger.warning("Could not find DLL " + str(DLLName) + ". Thus, could not properly create device. Since using another command class, this might be normal")
+            else:
+                _logger.error("Could not find DLL " + str(DLLName) + ". Thus, could not properly create device.")
 
         if cmdClass == None:
             cmdClass = Command

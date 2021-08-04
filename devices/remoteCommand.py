@@ -44,19 +44,22 @@ class RemoteCommand:
             if len(args) == 3:
                 #params = {"devNum": args[0], "name": args[1], "value": args[2]}
                 r = requests.post(dest, params=params, timeout=self.timeout)
+                return json.loads(r.content)['returnValue']
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
+                return -1
 
-        if (self._name == "SELFTEST"):
+        elif (self._name == "SELFTEST"):
             if len(args) == 1:
                 #params = {"devNum": args[0]}
                 r = requests.get(dest, params=params, timeout=self.timeout)
                 return json.loads(r.content)['returnValue']
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
+                return -1
 
         # TODO find a solution to this exception case
-        if (self._acc._name != "ICYSHSR1"):
+        elif (self._acc._name == "ICYSHSR1"):
             if len(args) == 2:
                 #params = {"devNum": args[0], "value": args[1]}
                 r = requests.get(dest, params=params, timeout=self.timeout)
@@ -64,20 +67,25 @@ class RemoteCommand:
             elif len(args) == 3:
                 #params = {"devNum": args[0], "value": args[1], "register_offset": args[2]}
                 r = requests.post(dest, params=params, timeout=self.timeout)
+                return json.loads(r.content)['returnValue']
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
+                return -1
         else:
             if len(args) == 2:
                 #params = {"devNum": args[0], "value": args[1]}
                 r = requests.post(dest, params=params, timeout=self.timeout)
+                return json.loads(r.content)['returnValue']
             elif len(args) == 1:
                 #params = {"devNum": args[0]}
                 r = requests.get(dest, params=params, timeout=self.timeout)
                 return json.loads(r.content)['returnValue']
             else:
                 _logger.warning("Incorrect number of arguments. Ignoring")
+                return -1
 
         time.sleep(0.01)
+        return -1
 
     def __repr__(self):
         return self._name

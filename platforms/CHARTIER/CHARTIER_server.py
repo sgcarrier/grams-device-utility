@@ -1,7 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import urllib
 from platforms.CHARTIER.CHARTIER import CHARTIER
-
+import json
 class CHARTIERHandler(BaseHTTPRequestHandler):
 
     board = None
@@ -18,14 +18,18 @@ class CHARTIERHandler(BaseHTTPRequestHandler):
             for path in paths:
                 cmd = getattr(cmd, path)
 
-            r = cmd(*query['args'])
+            args = query['args']
+            for i in range(len(args)):
+                args[i] = self.autoconvert(args[i])
 
-            if (r == -1):
-                self.send_response(400)
-            else:
-                self.send_response(200)
-                self.send_header("Content-type", "application/octet-stream")
-                self.end_headers()
+            r = cmd(*args)
+
+        if (r == -1):
+            self.send_response(400)
+        else:
+            self.send_response(200)
+            self.send_header("Content-type", "application/octet-stream")
+            self.end_headers()
 
     def do_GET(self):
         if self.board:
@@ -40,7 +44,11 @@ class CHARTIERHandler(BaseHTTPRequestHandler):
             for path in paths:
                 cmd = getattr(cmd, path)
 
-            r = cmd(*query['args'])
+            args = query['args']
+            for i in range(len(args)):
+                args[i] = self.autoconvert(args[i])
+
+            r = cmd(*args)
 
             if (r == -1):
                 self.send_response(400)
@@ -48,9 +56,23 @@ class CHARTIERHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-type", "application/octet-stream")
                 self.end_headers()
-                self.wfile.write(r)
+                json_str = json.dumps({'returnValue': str(r)})
+                self.wfile.write(json_str.encode(encoding='utf_8'))
 
+    def boolify(self, s):
+        if s == 'True':
+            return True
+        if s == 'False':
+            return False
+        raise ValueError("Not a bool")
 
+    def autoconvert(self, s):
+        for fn in (self.boolify, int, float, str):
+            try:
+                return fn(s)
+            except ValueError:
+                pass
+        return s
 
 
 if __name__ == '__main__':

@@ -163,6 +163,7 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     root.addHandler(handler)
 
-    b = CHARTIER(remoteIP="127.0.0.1")
+    b = CHARTIER(remoteIP="192.168.0.200")
 
-    test = b.LMK03318.LOL()
+    test = b.LMK03318.VNDRID(0)
+    print(test)
