@@ -594,7 +594,8 @@ class LMK04610:
                 writeBuf[0] = (paramInfo['addr'] + r) & 0xFF00
                 writeBuf[1] = (paramInfo['addr'] + r) & 0xFF
                 curr_val_reg = ((curr_val >> (r * 8)) & 0xFF) & (~paramInfo['mask'])
-                writeBuf[2] += curr_val_reg | value
+                write_value = ((value >> (r * 8)) & 0xFF)
+                writeBuf[2] += curr_val_reg | write_value
 
                 #writeBuf = (valueToSend).to_bytes(3, 'big')
                 _logger.debug("About to write raw data: " + str(writeBuf))
